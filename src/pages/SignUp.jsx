@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,6 +35,125 @@ import FamilyTab from "../components/FamilyTab";
 import PersonalDetailsTab from "../components/PersonalDetailsTab";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import IdTab from "../components/IdTab";
+import { postData } from "../store/utils";
+import { apiHost } from "@/constant";
+
+// Options: key-value pairs used in selects
+const RELIGIONS = [
+  { value: "Buddhism", label: "Buddhism" },
+  { value: "Christian", label: "Christian" },
+  { value: "Hindu", label: "Hindu" },
+  { value: "Muslim", label: "Muslim" },
+  { value: "Jain", label: "Jain" },
+  { value: "Jewish", label: "Jewish" },
+  { value: "Parsi", label: "Parsi" },
+  { value: "Sikh", label: "Sikh" },
+  { value: "Spiritual - not religious", label: "Spiritual - not religious" },
+  { value: "No Religion", label: "No Religion" },
+];
+
+const CASTES = [
+  { value: "Baniya", label: "Baniya" },
+  { value: "Banjara", label: "Banjara" },
+  { value: "Bari", label: "Bari" },
+  { value: "Berad", label: "Berad" },
+  { value: "Bhoep", label: "Bhoep" },
+  { value: "Brahman", label: "Brahman" },
+  { value: "Buddha", label: "Buddha" },
+  { value: "Burud", label: "Burud" },
+  { value: "Chambhar", label: "Chambhar" },
+  { value: "Dhangar", label: "Dhangar" },
+  { value: "Dhiwar", label: "Dhiwar" },
+  { value: "Dhobi", label: "Dhobi" },
+  { value: "Dombari", label: "Dombari" },
+  { value: "Gandali", label: "Gandali" },
+  { value: "Gavali", label: "Gavali" },
+  { value: "Golkar", label: "Golkar" },
+  { value: "Gond", label: "Gond" },
+  { value: "Govind", label: "Govind" },
+  { value: "Gowari", label: "Gowari" },
+  { value: "Gurav", label: "Gurav" },
+  { value: "Hanber", label: "Hanber" },
+  { value: "Holar", label: "Holar" },
+  { value: "Holi", label: "Holi" },
+  { value: "Jain", label: "Jain" },
+  { value: "Kalar", label: "Kalar" },
+  { value: "Karvi", label: "Karvi" },
+  { value: "Kohali", label: "Kohali" },
+  { value: "Kolam", label: "Kolam" },
+  { value: "Koli", label: "Koli" },
+  { value: "Korku", label: "Korku" },
+  { value: "Koshti", label: "Koshti" },
+  { value: "Kumbi", label: "Kumbi" },
+  { value: "Kumhar", label: "Kumhar" },
+  { value: "Kunbi", label: "Kunbi" },
+  { value: "Laman", label: "Laman" },
+  { value: "Lingayat", label: "Lingayat" },
+  { value: "Lodhi", label: "Lodhi" },
+  { value: "Lohar", label: "Lohar" },
+  { value: "Mahar", label: "Mahar" },
+  { value: "Mali", label: "Mali" },
+  { value: "Mana", label: "Mana" },
+  { value: "Mang", label: "Mang" },
+  { value: "Maratha", label: "Maratha" },
+  { value: "Marwadi", label: "Marwadi" },
+  { value: "Matang", label: "Matang" },
+  { value: "Mavi", label: "Mavi" },
+  { value: "Muslim", label: "Muslim" },
+  { value: "Nathjogi", label: "Nathjogi" },
+  { value: "Nhavi", label: "Nhavi" },
+  { value: "Panchal", label: "Panchal" },
+  { value: "Pardesi", label: "Pardesi" },
+  { value: "Pardi", label: "Pardi" },
+  { value: "Parit", label: "Parit" },
+  { value: "Pathan", label: "Pathan" },
+  { value: "Powar", label: "Powar" },
+  { value: "Pinjara", label: "Pinjara" },
+  { value: "Pradhan", label: "Pradhan" },
+  { value: "Rajput", label: "Rajput" },
+  { value: "Ramoshi", label: "Ramoshi" },
+  { value: "Sayed", label: "Sayed" },
+  { value: "Shikaghar", label: "Shikaghar" },
+  { value: "Shimpi", label: "Shimpi" },
+  { value: "Sonar", label: "Sonar" },
+  { value: "Sutar", label: "Sutar" },
+  { value: "Teli", label: "Teli" },
+  { value: "Wani", label: "Wani" },
+  { value: "Wadar", label: "Wadar" },
+  { value: "Wadhi", label: "Wadhi" },
+  { value: "Wami", label: "Wami" },
+  { value: "Wathi", label: "Wathi" },
+];
+
+const COMMUNITIES = [
+  { value: "Marathi", label: "Marathi" },
+  { value: "Tamil", label: "Tamil" },
+  { value: "Urdu", label: "Urdu" },
+  { value: "Malyalam", label: "Malyalam" },
+  { value: "Kannada", label: "Kannada" },
+  { value: "Punjabi", label: "Punjabi" },
+  { value: "Telugu", label: "Telugu" },
+  { value: "Hindi", label: "Hindi" },
+  { value: "Arabic", label: "Arabic" },
+  { value: "Arunachali", label: "Arunachali" },
+  { value: "Assamese", label: "Assamese" },
+  { value: "Bengali", label: "Bengali" },
+  { value: "Bhojpuri", label: "Bhojpuri" },
+  { value: "Chattisgarhi", label: "Chattisgarhi" },
+  { value: "Chinese", label: "Chinese" },
+  { value: "English", label: "English" },
+  { value: "French", label: "French" },
+  { value: "Gujrati", label: "Gujrati" },
+  { value: "Haryanavi", label: "Haryanavi" },
+  { value: "Pahari", label: "Pahari" },
+  { value: "Manipuri", label: "Manipuri" },
+  { value: "Marwari", label: "Marwari" },
+  { value: "Mizo", label: "Mizo" },
+  { value: "Rajsthani", label: "Rajsthani" },
+  { value: "Russian", label: "Russian" },
+  { value: "Spanish", label: "Spanish" },
+];
 
 const SignUp = () => {
   const { toast } = useToast();
@@ -49,6 +169,7 @@ const SignUp = () => {
   const [draftExists, setDraftExists] = useState(false);
 
   const updateField = (field, value) => {
+    console.log("updateField", field, value);
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -57,7 +178,7 @@ const SignUp = () => {
     setMobileMenuOpen(false);
   };
 
-  const requiredFields = useMemo(() => ["fullName", "mobile", "caste"], []);
+  const requiredFields = useMemo(() => ["firstname", "lastname", "phone", "caste"], []);
   const completionPercent = useMemo(() => {
     const total = requiredFields.length;
     const done = requiredFields.filter(
@@ -70,7 +191,7 @@ const SignUp = () => {
     try {
       const raw = localStorage.getItem("signupDraft");
       if (raw) setDraftExists(true);
-    } catch {}
+    } catch { }
   }, []);
 
   const saveDraft = () => {
@@ -78,7 +199,7 @@ const SignUp = () => {
       localStorage.setItem("signupDraft", JSON.stringify(formData));
       setDraftExists(true);
       toast({ title: "Draft saved" });
-    } catch {}
+    } catch { }
   };
 
   const loadDraft = () => {
@@ -88,7 +209,7 @@ const SignUp = () => {
         setFormData(JSON.parse(raw));
         toast({ title: "Draft loaded" });
       }
-    } catch {}
+    } catch { }
   };
 
   const clearDraft = () => {
@@ -96,18 +217,115 @@ const SignUp = () => {
       localStorage.removeItem("signupDraft");
       setDraftExists(false);
       toast({ title: "Draft cleared" });
-    } catch {}
+    } catch { }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.fullName && formData.mobile && formData.caste) {
-      await new Promise((r) => setTimeout(r, 800));
-      toast({
-        title: "Account created",
-        description: "Welcome to Hridaysparsha!",
-      });
-      navigate("/login");
+    const hasAll = (formData.firstname && formData.lastname && formData.phone && formData.caste);
+    if (hasAll) {
+      // await new Promise((r) => setTimeout(r, 800));
+      try {
+        // Build multipart form-data like provided cURL
+        const fd = new FormData();
+
+        // Basic + Personal
+        fd.append("firstname", formData.firstname || ""); 
+        fd.append("lastname", formData.lastname || "");
+        fd.append("gender", formData.gender || "");
+        fd.append("religion", formData.religion || "");
+        fd.append("caste", formData.caste || "");
+        fd.append("subCaste", formData.subCaste || "");
+        fd.append("community", formData.community || "");
+        fd.append("dateOfBirth", formData.dateOfBirth || "");
+        fd.append("timeOfBirth", formData.timeOfBirth || "");
+        fd.append("phone", formData.phone || "");
+        fd.append("email", formData.email || "");
+        fd.append("knownLanguages", formData.knownLanguages || "");
+        fd.append("diet", formData.diet || "");
+        fd.append("birthLocation", formData.birthLocation || formData.birthPlace || "");
+        fd.append("maritalStatus", formData.maritalStatus || "");
+        fd.append("height", formData.height || "");
+        fd.append("weight", formData.weight || "");
+        fd.append("bodyType", formData.bodyType || "");
+        fd.append("bloodGroup", formData.bloodGroup || "");
+        fd.append("physicalDisability", formData.physicalDisability || "");
+        fd.append("skinTone", formData.skinTone || "");
+        fd.append("drinkingHabits", formData.drinkingHabits || "");
+        fd.append("smokingHabits", formData.smokingHabits || "");
+
+        const hobbiesArray = Array.isArray(formData.hobbies)
+          ? formData.hobbies
+          : (formData.hobbies || "").split(",").map(s => s.trim()).filter(Boolean);
+        fd.append("hobbies", JSON.stringify(hobbiesArray));
+
+        // Files
+        if (Array.isArray(formData.profilePhotos)) {
+          formData.profilePhotos.forEach(f => f && fd.append("profilePhotos", f));
+        } else if (formData.photoFile) {
+          fd.append("profilePhotos", formData.photoFile);
+        }
+        if (formData.idProof) fd.append("idProof", formData.idProof);
+
+        // Auth/consents
+        if (formData.password) fd.append("password", formData.password);
+        if (typeof formData.termsAccepted !== "undefined") fd.append("termsAccepted", String(!!formData.termsAccepted));
+
+        // Nested sections
+        const userCareerInfo = {
+          education: formData.education || "",
+          jobSector: formData.jobSector || "",
+          jobTitle: formData.jobTitle || "",
+          jobLocation: formData.jobLocation || "",
+          jobDescription: formData.jobDescription || "",
+          annualSalary: formData.annualSalary || "",
+        };
+        fd.append("userCareerInfo", JSON.stringify(userCareerInfo));
+
+        const familyInfo = {
+          fatherName: formData.fatherName || "",
+          motherName: formData.motherName || "",
+          liveWithFamily: formData.liveWithFamily || "",
+          brothersCount: Number(formData.brothersCount ?? 0),
+          sistersCount: Number(formData.sistersCount ?? 0),
+          relativesSurname: Array.isArray(formData.relativesSurname)
+            ? formData.relativesSurname
+            : (formData.relativesSurname || "").split(",").map(s => s.trim()).filter(Boolean),
+        };
+        fd.append("familyInfo", JSON.stringify(familyInfo));
+
+        const astrologyInfo = {
+          ras: formData.ras || formData.rashi || "",
+          gan: formData.gan || "",
+          mangal: formData.mangal || "",
+          nadis: formData.nadis || "",
+          charan: formData.charan || "",
+          nakshatra: formData.nakshatra || "",
+          gotra: formData.gotra || "",
+        };
+        fd.append("astrologyInfo", JSON.stringify(astrologyInfo));
+
+        const response = await axios.post(`${apiHost.baseURL}user/auth/signup`, fd, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        console.log("signup response", response?.data);
+
+        toast({
+          title: "Account created",
+          description: "Welcome to Hridaysparsha!",
+        });
+        navigate("/login");
+
+
+      } catch (error) {
+        console.error("Error saving file upload request:", error);
+        // setErrorMessage("Error saving file upload request");
+      } finally {
+        // setIsLoadingOn(false);
+        // setIsOpen(false);
+      }
+      
     }
   };
 
@@ -117,6 +335,7 @@ const SignUp = () => {
     { value: "astro", label: "Astrology", icon: Star },
     { value: "career", label: "Career", icon: Briefcase },
     { value: "family", label: "Family", icon: Users },
+    { value: "id", label: "Id", icon: Users },
   ];
 
   return (
@@ -128,7 +347,7 @@ const SignUp = () => {
       </CardHeader>
       <CardContent className="p-6">
         {/* Progress */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-blue-500 to-purple-600"
@@ -138,7 +357,7 @@ const SignUp = () => {
           <div className="mt-1 text-xs text-gray-600">
             Completion: {completionPercent}%
           </div>
-        </div>
+        </div> */}
 
         <form onSubmit={handleSubmit}>
           {/* Mobile Navigation */}
@@ -167,11 +386,10 @@ const SignUp = () => {
                       key={item.value}
                       type="button"
                       onClick={() => handleTabChange(item.value)}
-                      className={`w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 transition-colors ${
-                        activeTab === item.value
-                          ? "bg-blue-50 text-blue-600"
-                          : "text-gray-700"
-                      }`}
+                      className={`w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 transition-colors ${activeTab === item.value
+                        ? "bg-blue-50 text-blue-600"
+                        : "text-gray-700"
+                        }`}
                     >
                       <Icon size={18} />
                       <span>{item.label}</span>
@@ -188,7 +406,7 @@ const SignUp = () => {
             className="w-full"
           >
             {/* Desktop Navigation */}
-            <TabsList className="hidden md:grid w-full grid-cols-5">
+            <TabsList className="hidden md:grid w-full grid-cols-6">
               {tabItems.map((item) => (
                 <TabsTrigger key={item.value} value={item.value}>
                   {item.label}
@@ -201,7 +419,7 @@ const SignUp = () => {
                 <div>
                   <Label htmlFor="photo">Photo</Label>
                   <div className="flex items-center gap-3">
-                    <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden ring-2 ring-blue-200">
+                    <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden ring-2 ring-blue-200">
                       {photoPreview ? (
                         <img
                           src={photoPreview}
@@ -221,6 +439,7 @@ const SignUp = () => {
                         if (file) {
                           setPhotoPreview(URL.createObjectURL(file));
                           updateField("photoName", file.name);
+                          updateField("photoFile", file);
                         }
                       }}
                     />
@@ -273,18 +492,9 @@ const SignUp = () => {
                       <SelectValue placeholder="Select religion" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Buddhism">Buddhism</SelectItem>
-                      <SelectItem value="Christian">Christian</SelectItem>
-                      <SelectItem value="Hindu">Hindu</SelectItem>
-                      <SelectItem value="Muslim">Muslim</SelectItem>
-                      <SelectItem value="Jain">Jain</SelectItem>
-                      <SelectItem value="Jewish">Jewish</SelectItem>
-                      <SelectItem value="Parsi">Parsi</SelectItem>
-                      <SelectItem value="Sikh">Sikh</SelectItem>
-                      <SelectItem value="Spiritual - not religious">
-                        Spiritual - not religious
-                      </SelectItem>
-                      <SelectItem value="No Religion">No Religion</SelectItem>
+                      {RELIGIONS.map((r) => (
+                        <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -299,76 +509,9 @@ const SignUp = () => {
                       <SelectValue placeholder="Select caste" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Baniya">Baniya</SelectItem>
-                      <SelectItem value="Banjara">Banjara</SelectItem>
-                      <SelectItem value="Bari">Bari</SelectItem>
-                      <SelectItem value="Berad">Berad</SelectItem>
-                      <SelectItem value="Bhoep">Bhoep</SelectItem>
-                      <SelectItem value="Brahman">Brahman</SelectItem>
-                      <SelectItem value="Buddha">Buddha</SelectItem>
-                      <SelectItem value="Burud">Burud</SelectItem>
-                      <SelectItem value="Chambhar">Chambhar</SelectItem>
-                      <SelectItem value="Dhangar">Dhangar</SelectItem>
-                      <SelectItem value="Dhiwar">Dhiwar</SelectItem>
-                      <SelectItem value="Dhobi">Dhobi</SelectItem>
-                      <SelectItem value="Dombari">Dombari</SelectItem>
-                      <SelectItem value="Gandali">Gandali</SelectItem>
-                      <SelectItem value="Gavali">Gavali</SelectItem>
-                      <SelectItem value="Golkar">Golkar</SelectItem>
-                      <SelectItem value="Gond">Gond</SelectItem>
-                      <SelectItem value="Govind">Govind</SelectItem>
-                      <SelectItem value="Gowari">Gowari</SelectItem>
-                      <SelectItem value="Gurav">Gurav</SelectItem>
-                      <SelectItem value="Hanber">Hanber</SelectItem>
-                      <SelectItem value="Holar">Holar</SelectItem>
-                      <SelectItem value="Holi">Holi</SelectItem>
-                      <SelectItem value="Jain">Jain</SelectItem>
-                      <SelectItem value="Kalar">Kalar</SelectItem>
-                      <SelectItem value="Karvi">Karvi</SelectItem>
-                      <SelectItem value="Kohali">Kohali</SelectItem>
-                      <SelectItem value="Kolam">Kolam</SelectItem>
-                      <SelectItem value="Koli">Koli</SelectItem>
-                      <SelectItem value="Korku">Korku</SelectItem>
-                      <SelectItem value="Koshti">Koshti</SelectItem>
-                      <SelectItem value="Kumbi">Kumbi</SelectItem>
-                      <SelectItem value="Kumhar">Kumhar</SelectItem>
-                      <SelectItem value="Kunbi">Kunbi</SelectItem>
-                      <SelectItem value="Laman">Laman</SelectItem>
-                      <SelectItem value="Lingayat">Lingayat</SelectItem>
-                      <SelectItem value="Lodhi">Lodhi</SelectItem>
-                      <SelectItem value="Lohar">Lohar</SelectItem>
-                      <SelectItem value="Mahar">Mahar</SelectItem>
-                      <SelectItem value="Mali">Mali</SelectItem>
-                      <SelectItem value="Mana">Mana</SelectItem>
-                      <SelectItem value="Mang">Mang</SelectItem>
-                      <SelectItem value="Maratha">Maratha</SelectItem>
-                      <SelectItem value="Marwadi">Marwadi</SelectItem>
-                      <SelectItem value="Matang">Matang</SelectItem>
-                      <SelectItem value="Mavi">Mavi</SelectItem>
-                      <SelectItem value="Muslim">Muslim</SelectItem>
-                      <SelectItem value="Nathjogi">Nathjogi</SelectItem>
-                      <SelectItem value="Nhavi">Nhavi</SelectItem>
-                      <SelectItem value="Panchal">Panchal</SelectItem>
-                      <SelectItem value="Pardesi">Pardesi</SelectItem>
-                      <SelectItem value="Pardi">Pardi</SelectItem>
-                      <SelectItem value="Parit">Parit</SelectItem>
-                      <SelectItem value="Pathan">Pathan</SelectItem>
-                      <SelectItem value="Powar">Powar</SelectItem>
-                      <SelectItem value="Pinjara">Pinjara</SelectItem>
-                      <SelectItem value="Pradhan">Pradhan</SelectItem>
-                      <SelectItem value="Rajput">Rajput</SelectItem>
-                      <SelectItem value="Ramoshi">Ramoshi</SelectItem>
-                      <SelectItem value="Sayed">Sayed</SelectItem>
-                      <SelectItem value="Shikaghar">Shikaghar</SelectItem>
-                      <SelectItem value="Shimpi">Shimpi</SelectItem>
-                      <SelectItem value="Sonar">Sonar</SelectItem>
-                      <SelectItem value="Sutar">Sutar</SelectItem>
-                      <SelectItem value="Teli">Teli</SelectItem>
-                      <SelectItem value="Wani">Wani</SelectItem>
-                      <SelectItem value="Wadar">Wadar</SelectItem>
-                      <SelectItem value="Wadhi">Wadhi</SelectItem>
-                      <SelectItem value="Wami">Wami</SelectItem>
-                      <SelectItem value="Wathi">Wathi</SelectItem>
+                      {CASTES.map((c) => (
+                        <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -391,32 +534,9 @@ const SignUp = () => {
                       <SelectValue placeholder="Select community" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Marathi">Marathi</SelectItem>
-                      <SelectItem value="Tamil">Tamil</SelectItem>
-                      <SelectItem value="Urdu">Urdu</SelectItem>
-                      <SelectItem value="Malyalam">Malyalam</SelectItem>
-                      <SelectItem value="Kannada">Kannada</SelectItem>
-                      <SelectItem value="Punjabi">Punjabi</SelectItem>
-                      <SelectItem value="Telugu">Telugu</SelectItem>
-                      <SelectItem value="Hindi">Hindi</SelectItem>
-                      <SelectItem value="Arabic">Arabic</SelectItem>
-                      <SelectItem value="Arunachali">Arunachali</SelectItem>
-                      <SelectItem value="Assamese">Assamese</SelectItem>
-                      <SelectItem value="Bengali">Bengali</SelectItem>
-                      <SelectItem value="Bhojpuri">Bhojpuri</SelectItem>
-                      <SelectItem value="Chattisgarhi">Chattisgarhi</SelectItem>
-                      <SelectItem value="Chinese">Chinese</SelectItem>
-                      <SelectItem value="English">English</SelectItem>
-                      <SelectItem value="French">French</SelectItem>
-                      <SelectItem value="Gujrati">Gujrati</SelectItem>
-                      <SelectItem value="Haryanavi">Haryanavi</SelectItem>
-                      <SelectItem value="Pahari">Pahari</SelectItem>
-                      <SelectItem value="Manipuri">Manipuri</SelectItem>
-                      <SelectItem value="Marwari">Marwari</SelectItem>
-                      <SelectItem value="Mizo">Mizo</SelectItem>
-                      <SelectItem value="Rajsthani">Rajsthani</SelectItem>
-                      <SelectItem value="Russian">Russian</SelectItem>
-                      <SelectItem value="Spanish">Spanish</SelectItem>
+                      {COMMUNITIES.map((cm) => (
+                        <SelectItem key={cm.value} value={cm.value}>{cm.label}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -497,6 +617,11 @@ const SignUp = () => {
             <TabsContent value="family">
               <FamilyTab formData={formData} updateField={updateField} />
             </TabsContent>
+
+            <TabsContent value="id">
+              <IdTab formData={formData} updateField={updateField} />
+            </TabsContent>
+
           </Tabs>
 
           {/* Navigation + Draft actions */}
@@ -513,20 +638,22 @@ const SignUp = () => {
               >
                 <ArrowLeft className="w-4 h-4 mr-1" /> Back
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  const order = tabItems.map((t) => t.value);
-                  const idx = order.indexOf(activeTab);
-                  if (idx < order.length - 1) setActiveTab(order[idx + 1]);
-                }}
-              >
-                Next <ArrowRight className="w-4 h-4 ml-1" />
-              </Button>
+              {activeTab !== 'id' && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    const order = tabItems.map((t) => t.value);
+                    const idx = order.indexOf(activeTab);
+                    if (idx < order.length - 1) setActiveTab(order[idx + 1]);
+                  }}
+                >
+                  Next <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              )}
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <Button type="button" variant="outline" onClick={saveDraft}>
                 <Save className="w-4 h-4 mr-1" /> Save draft
               </Button>
@@ -540,7 +667,7 @@ const SignUp = () => {
                   </Button>
                 </>
               )}
-            </div>
+            </div> */}
 
             <div className="flex items-center gap-2">
               <Button
@@ -550,13 +677,15 @@ const SignUp = () => {
               >
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={completionPercent < 100}
-                className="bg-gradient-to-r from-blue-500 to-purple-600"
-              >
-                Create Profile
-              </Button>
+              {activeTab === 'id' && (
+                <Button
+                  type="submit"
+                  disabled={completionPercent < 100}
+                  className="bg-gradient-to-r from-blue-500 to-purple-600"
+                >
+                  Create Profile
+                </Button>
+              )}
             </div>
           </div>
         </form>

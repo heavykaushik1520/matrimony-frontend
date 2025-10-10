@@ -181,7 +181,7 @@ const FamilyTab = ({ formData, updateField }) => {
 
       {/* ----------- Preferred Details ----------- */}
 
-      <div className="space-y-4">
+      {/* <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-800">
           Expectations about the Bride/Groom
         </h3>
@@ -350,10 +350,8 @@ const FamilyTab = ({ formData, updateField }) => {
           </div>
         </div>
 
-        {/* ---------------------- Astrology ----------------------  */}
         <h3 className="text-lg font-semibold text-gray-800">Astrology</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Preferred Ras */}
           <div>
             <Label htmlFor="preferredRas">Expected Ras</Label>
             <Select
@@ -381,7 +379,6 @@ const FamilyTab = ({ formData, updateField }) => {
             </Select>
           </div>
 
-          {/* Preferred Gan */}
           <div>
             <Label htmlFor="preferredGan">Expected Gan</Label>
             <Select
@@ -400,7 +397,6 @@ const FamilyTab = ({ formData, updateField }) => {
             </Select>
           </div>
 
-          {/* Preferred Mangal */}
           <div>
             <Label htmlFor="preferredMangal">Expected Mangal</Label>
             <Select
@@ -419,7 +415,6 @@ const FamilyTab = ({ formData, updateField }) => {
             </Select>
           </div>
 
-          {/* preferred naadi */}
           <div>
             <Label htmlFor="preferredNaadi">Expected Naadi</Label>
             <Select
@@ -438,18 +433,14 @@ const FamilyTab = ({ formData, updateField }) => {
             </Select>
           </div>
 
-          {/* preferred charan */}
           <div>
             <Label htmlFor="preferredCharan">Expected Charan</Label>
             <Input
               id="preferredCharan"
               value={formData.preferredCharan || ""}
               onChange={(e) => updateField("preferredCharan", e.target.value)}
-              // placeholder="e.g.,"
             />
           </div>
-
-          {/* preferred nakshatra */}
           <div>
             <Label htmlFor="preferredNakshatra">Expected Nakshatra</Label>
             <Input
@@ -458,28 +449,23 @@ const FamilyTab = ({ formData, updateField }) => {
               onChange={(e) =>
                 updateField("preferredNakshatra", e.target.value)
               }
-              // placeholder="e.g.,"
             />
           </div>
 
-          {/* preferred gotra */}
           <div>
             <Label htmlFor="preferredGotra">Expected Gotra</Label>
             <Input
               id="preferredGotra"
               value={formData.preferredGotra || ""}
               onChange={(e) => updateField("preferredGotra", e.target.value)}
-              // placeholder="e.g.,"
             />
           </div>
         </div>
 
-        {/*  ---------------------- Education and Career ---------------------- */}
         <h3 className="text-lg font-semibold text-gray-800">
           Education And Career
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* preferred education */}
           <div>
             <Label htmlFor="preferredEducation">Expected Education</Label>
             <Select
@@ -501,7 +487,6 @@ const FamilyTab = ({ formData, updateField }) => {
               </SelectContent>
             </Select>
           </div>
-          {/* preferred job sector */}
           <div>
             <Label htmlFor="preferredJobSector">Expected Job Sector</Label>
             <Select
@@ -522,8 +507,6 @@ const FamilyTab = ({ formData, updateField }) => {
               </SelectContent>
             </Select>
           </div>
-
-          {/* Preferred Job Location */}
           <div>
             <Label htmlFor="preferredJobLocation">Expected Job Location</Label>
             <Input
@@ -535,8 +518,6 @@ const FamilyTab = ({ formData, updateField }) => {
               placeholder="e.g., Pune / Mumbai"
             />
           </div>
-
-          {/* Preferred Annual Salary */}
           <div>
             <Label htmlFor="preferredAnnualSalary">Expected Salary</Label>
             <Select
@@ -558,11 +539,6 @@ const FamilyTab = ({ formData, updateField }) => {
               </SelectContent>
             </Select>
           </div>
-
-          {/* ------------ other expectations ---------------- */}
-          <h3 className="text-lg font-semibold text-gray-800">
-            Other Expectations
-          </h3>
           <div>
             <Label htmlFor="expectations">Other Expectations (Important)</Label>
             <Textarea
@@ -574,7 +550,7 @@ const FamilyTab = ({ formData, updateField }) => {
             />
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

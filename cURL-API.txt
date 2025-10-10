@@ -1,0 +1,422 @@
+
+SIGN UP : 
+curl --location 'https://artiststation.co.in/hridaysparshi-api/api/user/auth/signup' \
+--form 'firstname="Anushka"' \
+--form 'lastname="Sharma"' \
+--form 'gender="Female"' \
+--form 'religion="Hindu"' \
+--form 'caste="Kunbi"' \
+--form 'subCaste="Abcde"' \
+--form 'community="Hindi"' \
+--form 'dateOfBirth="2000-03-11"' \
+--form 'timeOfBirth="10:00:00"' \
+--form 'phone="9175000001"' \
+--form 'email="anushkai@gmail.com"' \
+--form 'knownLanguages="Marathi, English , Hindi"' \
+--form 'diet="Vegetarian"' \
+--form 'birthLocation="Haryana"' \
+--form 'maritalStatus="Never Married"' \
+--form 'height="170"' \
+--form 'weight="55"' \
+--form 'bodyType="Athletic"' \
+--form 'bloodGroup="B+"' \
+--form 'physicalDisability="No"' \
+--form 'skinTone="Light"' \
+--form 'drinkingHabits="No"' \
+--form 'smokingHabits="No"' \
+--form 'profilePhotos=@"/C:/Users/rushi/Downloads/anusharma.webp"' \
+--form 'profilePhotos=@"/C:/Users/rushi/Downloads/anusharma2.jpg"' \
+--form 'profilePhotos=@"/C:/Users/rushi/Downloads/anusharma3.png"' \
+--form 'hobbies="[\"Reading\", \"Music\", \"Sports\"]"' \
+--form 'idProof=@"/C:/Users/rushi/Downloads/Slide 2/water-slide2-bg.png"' \
+--form 'password="Anushka@150200"' \
+--form 'termsAccepted="true"' \
+--form 'userCareerInfo="{\"education\":\"Diploma\",\"jobSector\":\"Private\",\"jobTitle\":\"ABC\",\"jobLocation\":\"Mumbai\",\"jobDescription\":\"Nothing to say\",\"annualSalary\" : \"3 - 5 lac\"}"' \
+--form 'familyInfo="{\"fatherName\": \"Ramesh Sharma\",\"motherName\": \"Sita Sharma\",\"liveWithFamily\": \"Yes\",\"brothersCount\": 1,\"sistersCount\": 0,\"relativesSurname\": [\"Patel\", \"Mehta\", \"Joshi\"]}"' \
+--form 'astrologyInfo="{\"ras\": \"Virgo\",\"gan\": \"Deva\",\"mangal\": \"Partial\",\"nadis\":\"Aadi\",\"charan\":\"abc\",\"nakshatra\":\"abc\",\"gotra\":\"xyz\"}"'
+
+
+
+
+SIGN IN : 
+curl --location 'https://artiststation.co.in/hridaysparshi-api/api/user/auth/signin' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+     "email": "virat.kohli@gmail.com",
+     "password":"Virat@150200"
+}'
+
+
+
+
+MY-PROFILE : 
+curl --location --request GET 'http://localhost:3000/api/user/auth/me' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1MDYxZTA5OS1hNDZjLTRlYjYtYTgzNC03NTEzOTRjOGZjOTEiLCJpYXQiOjE3NTk3MzQ0ODYsImV4cCI6MTc1OTczODA4Nn0.6eFxiZbk_UmdJ0WSz6e6GhyXFUJrSxlQNAf766aqlQ8' \
+--header 'Content-Type: text/plain' \
+--data-raw '{
+    "password": "Kaushik@150200",
+    "firstname": "Kaushik",
+    "lastname": "Mandavkar",
+    "gender": "Male",
+    "religion": "Hindu",
+    "caste": "Brahmin",
+    "subCaste": "Saraswat",
+    "community": "Konkani",
+    "dateOfBirth": "1992-07-20",
+    "timeOfBirth": "2025-09-23T08:45:00Z",
+    "phone": "9175866586",
+    "email": "kaushikmandavkar6@gmail.com",
+    "knownLanguages": ["Hindi", "English", "Marathi"],
+    "diet": "Non-Vegetarian",
+    "birthLocation": "Pune, India",
+    "maritalStatus": "Never Married",
+    "height": 178,
+    "weight": 75,
+    "bloodGroup": "A+",
+    "physicalDisability": "No",
+    "skinTone": "Medium",
+    "profilePhotos": ["https://i.pinimg.com/736x/de/8e/ea/de8eea6f67a5fc92996ff6d48b3bd690.jpg", "https://wallpapercave.com/wp/wp4051774.jpg"],
+    "hobbies": ["Photography", "Hiking", "Reading"],
+    "idProof": "https://www.iaspaper.net/wp-content/uploads/2017/02/Aadhar-Card-UIDAI-.jpg",
+    "termsAccepted": true,
+    "astrology": {
+        "ras": "Cancer",
+        "gan": "Manushya",
+        "mangal": "Yes"
+    },
+    "family": {
+        "fatherName": "Ramchandra Mandavkar",
+        "motherName": "Rohini Mandavkar",
+        "liveWithFamily": "Yes",
+        "brothersCount": 1,
+        "sistersCount": 0,
+        "relativesSurname": ["Gupta", "Malhotra", "Jain"]
+    },
+    "career": {
+        "education": "Post-Graduation",
+        "jobSector": "Private",
+        "jobTitle": "Senior Software Engineer",
+        "jobLocation": "Bengaluru, India",
+        "jobDescription": "Full-stack development using Node.js and React.",
+        "annualSalary": "Above 10 lac"
+    }
+}'
+
+
+
+
+
+GET-DATA :
+curl --location 'https://artiststation.co.in/hridaysparshi-api/api/user/auth/users-opposite-gender' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwZGUzM2IzZi1iNTZkLTQ1OTYtYjA4YS00YjYwZjE5YTU4NGUiLCJpYXQiOjE3NTk4MzE2MzYsImV4cCI6MTc1OTgzNTIzNn0.MghKSKOM-cEv3TUSZOp1qMHGeACZN6vF-COsVEZ__nM' \
+--data ''
+
+{
+    "totalItems": 1,
+    "totalPages": 1,
+    "currentPage": 1,
+    "users": [
+        {
+            "age": 25,
+            "id": "3218a09f-2041-46fb-ac74-c0feb7f3c5bb",
+            "firstname": "Anushka",
+            "lastname": "Sharma",
+            "gender": "Female",
+            "religion": "Hindu",
+            "caste": "Kunbi",
+            "subCaste": "Abcde",
+            "community": "Hindi",
+            "dateOfBirth": "2000-03-11T00:00:00.000Z",
+            "timeOfBirth": "10:00:00",
+            "phone": "9175000001",
+            "email": "anushkai@gmail.com",
+            "knownLanguages": "Marathi, English , Hindi",
+            "diet": "Vegetarian",
+            "birthLocation": "Haryana",
+            "maritalStatus": "Never Married",
+            "height": 170,
+            "weight": 55,
+            "bodyType": "Athletic",
+            "bloodGroup": "B+",
+            "physicalDisability": "No",
+            "skinTone": "Light",
+            "drinkingHabits": "No",
+            "smokingHabits": "No",
+            "profilePhotos": [
+                "https://artiststation.co.in/hridaysparshi-api/uploads/images/profilePhotos-1759813790865.webp",
+                "https://artiststation.co.in/hridaysparshi-api/uploads/images/profilePhotos-1759813790866.jpg",
+                "https://artiststation.co.in/hridaysparshi-api/uploads/images/profilePhotos-1759813790867.png"
+            ],
+            "hobbies": [
+                "[\"Reading\"",
+                "\"Music\"",
+                "\"Sports\"]"
+            ],
+            "personalId": "HRDSPSH-187471",
+            "createdAt": "2025-10-07T05:09:50.000Z",
+            "updatedAt": "2025-10-07T05:09:50.000Z",
+            "AstrologyInfo": {
+                "id": "ca843b28-2211-48d4-83de-221f86c0ff94",
+                "userId": "3218a09f-2041-46fb-ac74-c0feb7f3c5bb",
+                "ras": "Virgo",
+                "gan": "Deva",
+                "mangal": "Partial",
+                "nadis": "Aadi",
+                "charan": "abc",
+                "nakshatra": "abc",
+                "gotra": "xyz",
+                "createdAt": "2025-10-07T05:09:51.000Z",
+                "updatedAt": "2025-10-07T05:09:51.000Z"
+            },
+            "FamilyInfo": {
+                "id": "eb802796-5488-4006-8967-ae2a832f7f7e",
+                "userId": "3218a09f-2041-46fb-ac74-c0feb7f3c5bb",
+                "fatherName": "Ramesh Sharma",
+                "motherName": "Sita Sharma",
+                "liveWithFamily": "Yes",
+                "brothersCount": 1,
+                "sistersCount": 0,
+                "relativesSurname": [
+                    "Patel",
+                    "Mehta",
+                    "Joshi"
+                ],
+                "createdAt": "2025-10-07T05:09:51.000Z",
+                "updatedAt": "2025-10-07T05:09:51.000Z"
+            },
+            "UserCareerInfo": {
+                "id": "fee264fa-49d5-4cb3-9733-84da1a2c339f",
+                "userId": "3218a09f-2041-46fb-ac74-c0feb7f3c5bb",
+                "education": "Diploma",
+                "jobSector": "Private",
+                "jobTitle": "ABC",
+                "jobLocation": "Mumbai",
+                "jobDescription": "Nothing to say",
+                "annualSalary": "3 - 5 lac",
+                "createdAt": "2025-10-07T05:09:51.000Z",
+                "updatedAt": "2025-10-07T05:09:51.000Z"
+            }
+        }
+    ]
+}
+
+
+
+
+
+REFRESH-TOKEN : 
+https://artiststation.co.in/hridaysparshi-api/api/user/auth/refresh-token
+curl --location 'https://artiststation.co.in/hridaysparshi-api/api/user/auth/refresh-token' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwZGUzM2IzZi1iNTZkLTQ1OTYtYjA4YS00YjYwZjE5YTU4NGUiLCJpYXQiOjE3NTk4MzE2MzYsImV4cCI6MTc1OTgzNTIzNn0.MghKSKOM-cEv3TUSZOp1qMHGeACZN6vF-COsVEZ__nM' \
+--header 'Content-Type: text/plain' \
+
+
+BASIC PREFRENCE : 
+curl --location 'https://artiststation.co.in/hridaysparshi-api/api/user/preferences' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwZGUzM2IzZi1iNTZkLTQ1OTYtYjA4YS00YjYwZjE5YTU4NGUiLCJpYXQiOjE3NTk4MzE2MzYsImV4cCI6MTc1OTgzNTIzNn0.MghKSKOM-cEv3TUSZOp1qMHGeACZN6vF-COsVEZ__nM' \
+--header 'Content-Type: application/json' \
+--data '{
+ 
+  "preferredAge": "27-30",
+  "preferredHeight": "5'\''4\" - 5'\''8\"",
+  "preferredWeight": "55 - 70 kg",
+
+  "preferredMaritalStatus": "Never Married",
+  "preferredMotherToungue": "Marathi",
+
+  "preferredEatingHabits": "Veg",
+  "preferredDrinkingHabits": "Occassionally",
+  "preferredSmokingHabits": "No",
+
+  "preferredReligion": "Hindu",
+  "preferredCaste": "Maratha",
+  "preferredSubCaste": "96 Kuli Maratha",
+
+  "preferredRas": "Leo",
+  "preferredGan": "Manushya",
+  "preferredMangal": "No",
+  "preferredNaadi": "Madhya",
+  "preferredCharan": "2",
+  "preferredNakshatra": "Magha",
+  "preferredGotra": "Kashyap",
+
+  "preferredEducation": "Graduation",
+  "preferredJobSector": "Private",
+  "preferredJobLocation": "Pune",
+  "preferredAnnualSalary": "5 - 7.5 lac",
+
+  "expectations": "Looking for a well-educated, family-oriented partner with similar values."
+}'
+
+
+FILTERATION OF OPPOSITE GENDER :
+
+curl --location 'https://artiststation.co.in/hridaysparshi-api/api/user/auth/users-opposite-gender/filter?religion=Hindu&caste=Kunbi&community=Hindi&maritalStatus=Never%20Married&skinTone=Light&ras=Virgo&gan=Deva&mangal=Partial&education=Diploma&jobSector=Private&jobLocation=Mumbai&annualSalary=3%20-%205%20lac&limit=10&page=1' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwZGUzM2IzZi1iNTZkLTQ1OTYtYjA4YS00YjYwZjE5YTU4NGUiLCJpYXQiOjE3NTk5MDE3ODYsImV4cCI6MTc1OTkwNTM4Nn0.G1IPOg0uckveu5Jr9jv8ma7kk-pwsMjDgPhXZ_3xGrM'
+
+{
+    "message": "Filtered opposite-gender results retrieved successfully.",
+    "totalItems": 2,
+    "totalPages": 1,
+    "currentPage": 1,
+    "users": [
+        {
+            "age": 25,
+            "id": "3218a09f-2041-46fb-ac74-c0feb7f3c5bb",
+            "firstname": "Anushka",
+            "lastname": "Sharma",
+            "gender": "Female",
+            "religion": "Hindu",
+            "caste": "Kunbi",
+            "subCaste": "Abcde",
+            "community": "Hindi",
+            "dateOfBirth": "2000-03-11T00:00:00.000Z",
+            "timeOfBirth": "10:00:00",
+            "phone": "9175000001",
+            "email": "anushkai@gmail.com",
+            "knownLanguages": "Marathi, English , Hindi",
+            "diet": "Vegetarian",
+            "birthLocation": "Haryana",
+            "maritalStatus": "Never Married",
+            "height": 170,
+            "weight": 55,
+            "bodyType": "Athletic",
+            "bloodGroup": "B+",
+            "physicalDisability": "No",
+            "skinTone": "Light",
+            "drinkingHabits": "No",
+            "smokingHabits": "No",
+            "profilePhotos": [
+                "https://artiststation.co.in/hridaysparshi-api/uploads/images/profilePhotos-1759813790865.webp",
+                "https://artiststation.co.in/hridaysparshi-api/uploads/images/profilePhotos-1759813790866.jpg",
+                "https://artiststation.co.in/hridaysparshi-api/uploads/images/profilePhotos-1759813790867.png"
+            ],
+            "hobbies": [
+                "[\"Reading\"",
+                "\"Music\"",
+                "\"Sports\"]"
+            ],
+            "personalId": "HRDSPSH-187471",
+            "createdAt": "2025-10-07T05:09:50.000Z",
+            "updatedAt": "2025-10-07T05:09:50.000Z",
+            "AstrologyInfo": {
+                "id": "ca843b28-2211-48d4-83de-221f86c0ff94",
+                "userId": "3218a09f-2041-46fb-ac74-c0feb7f3c5bb",
+                "ras": "Virgo",
+                "gan": "Deva",
+                "mangal": "Partial",
+                "nadis": "Aadi",
+                "charan": "abc",
+                "nakshatra": "abc",
+                "gotra": "xyz",
+                "createdAt": "2025-10-07T05:09:51.000Z",
+                "updatedAt": "2025-10-07T05:09:51.000Z"
+            },
+            "UserCareerInfo": {
+                "id": "fee264fa-49d5-4cb3-9733-84da1a2c339f",
+                "userId": "3218a09f-2041-46fb-ac74-c0feb7f3c5bb",
+                "education": "Diploma",
+                "jobSector": "Private",
+                "jobTitle": "ABC",
+                "jobLocation": "Mumbai",
+                "jobDescription": "Nothing to say",
+                "annualSalary": "3 - 5 lac",
+                "createdAt": "2025-10-07T05:09:51.000Z",
+                "updatedAt": "2025-10-07T05:09:51.000Z"
+            },
+            "FamilyInfo": {
+                "id": "eb802796-5488-4006-8967-ae2a832f7f7e",
+                "userId": "3218a09f-2041-46fb-ac74-c0feb7f3c5bb",
+                "fatherName": "Ramesh Sharma",
+                "motherName": "Sita Sharma",
+                "liveWithFamily": "Yes",
+                "brothersCount": 1,
+                "sistersCount": 0,
+                "relativesSurname": [
+                    "Patel",
+                    "Mehta",
+                    "Joshi"
+                ],
+                "createdAt": "2025-10-07T05:09:51.000Z",
+                "updatedAt": "2025-10-07T05:09:51.000Z"
+            }
+        },
+        {
+            "age": 25,
+            "id": "20609010-ae8c-4edd-baf6-45a16e9925c4",
+            "firstname": "Anushka",
+            "lastname": "Sharma",
+            "gender": "Female",
+            "religion": "Hindu",
+            "caste": "Kunbi",
+            "subCaste": "Abcde",
+            "community": "Hindi",
+            "dateOfBirth": "2000-03-11T00:00:00.000Z",
+            "timeOfBirth": "10:00:00",
+            "phone": "9175000002",
+            "email": "anushkai2@gmail.com",
+            "knownLanguages": "Marathi, English , Hindi",
+            "diet": "Vegetarian",
+            "birthLocation": "Haryana",
+            "maritalStatus": "Never Married",
+            "height": 170,
+            "weight": 55,
+            "bodyType": "Athletic",
+            "bloodGroup": "B+",
+            "physicalDisability": "No",
+            "skinTone": "Light",
+            "drinkingHabits": "No",
+            "smokingHabits": "No",
+            "profilePhotos": [],
+            "hobbies": [
+                "[\"Reading\"",
+                "\"Music\"",
+                "\"Sports\"]"
+            ],
+            "personalId": "HRDSPSH-752249",
+            "createdAt": "2025-10-07T10:26:04.000Z",
+            "updatedAt": "2025-10-07T10:26:04.000Z",
+            "AstrologyInfo": {
+                "id": "eff9485f-0d69-42f3-ae53-6d613cbf6de6",
+                "userId": "20609010-ae8c-4edd-baf6-45a16e9925c4",
+                "ras": "Virgo",
+                "gan": "Deva",
+                "mangal": "Partial",
+                "nadis": "Aadi",
+                "charan": "abc",
+                "nakshatra": "abc",
+                "gotra": "xyz",
+                "createdAt": "2025-10-07T10:26:04.000Z",
+                "updatedAt": "2025-10-07T10:26:04.000Z"
+            },
+            "UserCareerInfo": {
+                "id": "830c70e0-872b-40f6-9de2-2555feb81f57",
+                "userId": "20609010-ae8c-4edd-baf6-45a16e9925c4",
+                "education": "Diploma",
+                "jobSector": "Private",
+                "jobTitle": "ABC",
+                "jobLocation": "Mumbai",
+                "jobDescription": "Nothing to say",
+                "annualSalary": "3 - 5 lac",
+                "createdAt": "2025-10-07T10:26:04.000Z",
+                "updatedAt": "2025-10-07T10:26:04.000Z"
+            },
+            "FamilyInfo": {
+                "id": "4c811aa6-f317-4ee9-bffb-4f481b71570a",
+                "userId": "20609010-ae8c-4edd-baf6-45a16e9925c4",
+                "fatherName": "Ramesh Sharma",
+                "motherName": "Sita Sharma",
+                "liveWithFamily": "Yes",
+                "brothersCount": 1,
+                "sistersCount": 0,
+                "relativesSurname": [
+                    "Patel",
+                    "Mehta",
+                    "Joshi"
+                ],
+                "createdAt": "2025-10-07T10:26:04.000Z",
+                "updatedAt": "2025-10-07T10:26:04.000Z"
+            }
+        }
+    ]
+}
