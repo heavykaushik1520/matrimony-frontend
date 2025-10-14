@@ -50,7 +50,7 @@ const SignIn = () => {
             <Input id="email" type="email" value={form.email} onChange={handleChange} placeholder="you@example.com" />
           </div>
           <div className="text-xs text-gray-600">
-            Try demo: demo@hspvm.org / demo123
+            Try demo: demo@hspvm.org / demo123 
           </div>
           <div>
             <Label htmlFor="password">Password</Label>

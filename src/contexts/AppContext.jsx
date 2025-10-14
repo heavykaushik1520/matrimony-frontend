@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
+import { postDataWithoutToken } from '@/store/utils';
 
 const defaultAppContext = {
   profiles: [],
@@ -146,31 +147,55 @@ export const AppProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    // Dummy credential rules
-    const allowed = [
-      { email: 'demo@hspvm.org', password: 'demo123', name: 'Demo User' },
-      { email: 'admin@hspvm.org', password: 'admin123', name: 'Admin' },
-      { email: 'male@hspvm.org', password: 'male123', name: 'Male User', gender: 'Male' },
-      { email: 'female@hspvm.org', password: 'female123', name: 'Female User', gender: 'Female' },
-    ];
-    await new Promise(r => setTimeout(r, 500));
-    const found = allowed.find(u => u.email === email && u.password === password);
-    if (!found) {
-      toast({ title: 'Invalid credentials', description: 'Please check your email/password.' });
+    try {
+      const response = await postDataWithoutToken('user/auth/signin', { email, password });
+
+      if (response?.statusCode !== 200) {
+        // Show server-provided validation error if available
+        const serverMessage = response?.message || response?.data?.message;
+        const firstValidationError = Array.isArray(response?.errors)
+          ? response.errors[0]
+          : undefined;
+        toast({
+          title: 'Invalid credentials',
+          description: firstValidationError || serverMessage || 'Please check your email/password.',
+        });
+        return false;
+      }
+
+      const data = response || {};
+      const accessToken = data.accessToken || data.token || data.access_token;
+      const refreshToken = data.refreshToken || data.refresh_token;
+      const userFromApi = data.user || data.profile || {};
+
+      // Persist tokens for API helpers that rely on them
+      if (accessToken) localStorage.setItem('isAuthenticated', accessToken);
+      if (refreshToken) localStorage.setItem('jwtRefreshToken', refreshToken);
+
+      // Build a minimal user object for app state
+      const userObj = {
+        email: userFromApi.email || email,
+        name: userFromApi.name || userFromApi.fullName || userFromApi.username || 'User',
+        id: userFromApi.id,
+      };
+
+      setIsAuthenticated(true);
+      setUser(userObj);
+      localStorage.setItem('hspvm_auth', JSON.stringify({ isAuthenticated: true, user: userObj }));
+
+      // Optionally seed my profile if gender is provided from API
+      if (!myProfile && (userFromApi.gender || userFromApi.Gender)) {
+        const seeded = { id: 'me', fullName: userObj.name, gender: userFromApi.gender || userFromApi.Gender };
+        setMyProfile(seeded);
+        localStorage.setItem('hspvm_myprofile', JSON.stringify(seeded));
+      }
+
+      toast({ title: 'Welcome back!', description: 'Signed in successfully.' });
+      return true;
+    } catch (err) {
+      toast({ title: 'Network error', description: 'Unable to sign in. Please try again.' });
       return false;
     }
-    setIsAuthenticated(true);
-    const userObj = { email: found.email, name: found.name };
-    setUser(userObj);
-    localStorage.setItem('hspvm_auth', JSON.stringify({ isAuthenticated: true, user: userObj }));
-    // Seed my profile with gender for new male/female demo accounts
-    if (found.gender && !myProfile) {
-      const seeded = { id: 'me', fullName: found.name, gender: found.gender };
-      setMyProfile(seeded);
-      localStorage.setItem('hspvm_myprofile', JSON.stringify(seeded));
-    }
-    toast({ title: 'Welcome back!', description: 'Signed in successfully.' });
-    return true;
   };
 
   const logout = () => {
