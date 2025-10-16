@@ -13,6 +13,13 @@ const MyProfile = () => {
   const [editing, setEditing] = useState(false);
   const [data, setData] = useState(null);
 
+  const rawDate = data?.dateOfBirth || myProfile?.dateOfBirth;
+  const birthDate = rawDate
+    ? new Date(rawDate).toISOString().split("T")[0]
+    : " ";
+
+  const photos = data?.profilePhotos || myProfile?.profilePhotos || [];
+
   const basicRows = useMemo(
     () => [
       { label: "First Name", value: data?.firstname || user?.firstname },
@@ -26,7 +33,7 @@ const MyProfile = () => {
       { label: "Community", value: data?.community || myProfile?.community },
       {
         label: "Date Of Birth",
-        value: data?.dateOfBirth || myProfile?.dateOfBirth,
+        value: birthDate,
       },
       {
         label: "Time Of Birth",
@@ -49,8 +56,14 @@ const MyProfile = () => {
         label: "Blood Group",
         value: data?.bloodGroup || myProfile?.bloodGroup,
       },
-      { label: "Height", value: data?.height || myProfile?.height },
-      { label: "Weight", value: data?.weight || myProfile?.weight },
+      {
+        label: "Height",
+        value: `${data?.height || myProfile?.height} cm`,
+      },
+      {
+        label: "Weight",
+        value: `${data?.weight || myProfile?.weight} kg`,
+      },
 
       { label: "Skin Tone", value: data?.skinTone || myProfile?.skinTone },
       {
@@ -123,11 +136,13 @@ const MyProfile = () => {
     () => [
       {
         label: "Education",
-        value: data?.UserCareerInfo?.education || user?.UserCareerInfo?.education,
+        value:
+          data?.UserCareerInfo?.education || user?.UserCareerInfo?.education,
       },
       {
         label: "Job Sector",
-        value: data?.UserCareerInfo?.jobSector || user?.UserCareerInfo?.jobSector,
+        value:
+          data?.UserCareerInfo?.jobSector || user?.UserCareerInfo?.jobSector,
       },
       {
         label: "Job Title",
@@ -135,19 +150,23 @@ const MyProfile = () => {
       },
       {
         label: "Annual Salary",
-        value: data?.UserCareerInfo?.annualSalary || user?.UserCareerInfo?.annualSalary,
+        value:
+          data?.UserCareerInfo?.annualSalary ||
+          user?.UserCareerInfo?.annualSalary,
       },
 
       {
         label: "Job Description",
-        value: data?.UserCareerInfo?.jobDescription || user?.UserCareerInfo?.jobDescription,
+        value:
+          data?.UserCareerInfo?.jobDescription ||
+          user?.UserCareerInfo?.jobDescription,
       },
       {
         label: "Job Location",
-        value: data?.UserCareerInfo?.jobLocation || user?.UserCareerInfo?.jobLocation,
+        value:
+          data?.UserCareerInfo?.jobLocation ||
+          user?.UserCareerInfo?.jobLocation,
       },
-
-      
     ],
     [data, myProfile, user]
   );
@@ -173,29 +192,44 @@ const MyProfile = () => {
 
   return (
     <div className="space-y-6">
+      {photos.length > 0 && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-base font-semibold text-gray-800 mb-3">
+              Your Photos
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {photos.map((url, index) => (
+                <div
+                  key={index}
+                  className="w-full h-100 overflow-hidden rounded-lg border"
+                >
+                  <img
+                    src={url}
+                    alt={`Profile ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardContent className="p-5 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="relative w-16 h-16 rounded-full overflow-hidden shadow-md">
-              <img
-                src={
-                  myProfile?.photo ||
-                  `https://i.pravatar.cc/160?u=${encodeURIComponent(
-                    user?.email || "me"
-                  )}`
-                }
-                alt={myProfile?.fullName || user?.name || "Profile"}
-                className="w-full h-full object-cover"
-              />
-            </div>
+           
             <div>
               <div className="text-xl font-bold text-gray-900">
-                {data?.firstname || user?.firstname || "Your Name"}
+                {data?.firstname || user?.firstname || "Your Name"}{" "}
+                {data?.lastname || user?.lastname || "Your Name"}
               </div>
               <div className="flex items-center gap-2 text-gray-600 text-sm">
                 <span className="inline-flex items-center">
-                  <MapPin className="w-3.5 h-3.5 mr-1" />
-                  {myProfile?.placeOfBirth || "—"}
+                  {/* <MapPin className="w-3.5 h-3.5 mr-1" /> */}
+                  {data?.age || "—"}, {data?.UserCareerInfo?.jobTitle || "—"},{" "}
+                  {data?.UserCareerInfo?.jobLocation || "—"}
                 </span>
                 {myProfile?.maritalStatus && (
                   <Badge
@@ -245,7 +279,7 @@ const MyProfile = () => {
           <div className="text-base font-semibold text-gray-800 mb-3">
             Astrology Information
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {astrologyRow.map((row, i) => (
               <div key={i} className="rounded-lg border p-3 bg-white">
                 <div className="text-xs uppercase tracking-wide text-gray-500">
@@ -263,7 +297,7 @@ const MyProfile = () => {
           <div className="text-base font-semibold text-gray-800 mb-3">
             Career Information
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {careerRow.map((row, i) => (
               <div key={i} className="rounded-lg border p-3 bg-white">
                 <div className="text-xs uppercase tracking-wide text-gray-500">
@@ -281,7 +315,7 @@ const MyProfile = () => {
           <div className="text-base font-semibold text-gray-800 mb-3">
             Family Information
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {familyRow.map((row, i) => (
               <div key={i} className="rounded-lg border p-3 bg-white">
                 <div className="text-xs uppercase tracking-wide text-gray-500">
