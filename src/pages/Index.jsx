@@ -30,7 +30,7 @@ const Index = () => {
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
             <div className="relative h-60 md:h-80 lg:h-96 rounded-xl overflow-hidden">
               <iframe
-                className="absolute inset-0 w-full h-full"
+                className="absolute inset-0 w-full h-full "
                 src="https://www.youtube.com/embed/yUCkysNyoHk?si=C-DyDOMArO3WTfwu"
                 title="Promotional Video"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

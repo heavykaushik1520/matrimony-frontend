@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -95,7 +95,8 @@
     @apply bg-background text-foreground font-sans dark:bg-background dark:text-foreground;
   }
 
-  pre, code {
+  pre,
+  code {
     @apply font-mono;
   }
 }
@@ -130,4 +131,8 @@
   @apply my-4 ml-6;
 }
 
-
+@media (max-width: 576px) {
+  .ytmVideoCoverThumbnail {
+    background-size: contain !important;
+  }
+}
