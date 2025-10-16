@@ -33,7 +33,7 @@ const TestimonialsCarousel = ({ items }) => {
           const avatar = t.avatarUrl || `https://i.pravatar.cc/120?img=${(i % 70) + 1}`;
           return (
             <div key={i} className="min-w-full shrink-0 px-6 py-8">
-              <div className="mx-auto max-w-2xl text-center">
+              <div className="mx-auto max-w-40 md:max-w-2xl text-center">
                 <div className="flex justify-center mb-4">
                   <img
                     src={avatar}
