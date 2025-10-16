@@ -220,14 +220,14 @@ const MyProfile = () => {
         <CardContent className="p-5 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div>
-              <div className="text-xl font-bold text-gray-900">
+              <div className="text-2xl font-bold text-gray-900">
                 {data?.firstname || user?.firstname || "Your Name"}{" "}
                 {data?.lastname || user?.lastname || "Your Name"} {"  "}
                 <span>
                   {data?.maritalStatus && (
                     <Badge
                       variant="secondary"
-                      className="bg-purple-100 text-purple-700"
+                      className="bg-purple-100 text-purple-500"
                     >
                       {data.maritalStatus}
                     </Badge>
