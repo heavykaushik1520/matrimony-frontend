@@ -219,26 +219,28 @@ const MyProfile = () => {
       <Card>
         <CardContent className="p-5 flex items-center justify-between">
           <div className="flex items-center gap-4">
-           
             <div>
               <div className="text-xl font-bold text-gray-900">
                 {data?.firstname || user?.firstname || "Your Name"}{" "}
-                {data?.lastname || user?.lastname || "Your Name"}
+                {data?.lastname || user?.lastname || "Your Name"} {"  "}
+                <span>
+                  {data?.maritalStatus && (
+                    <Badge
+                      variant="secondary"
+                      className="bg-purple-100 text-purple-700"
+                    >
+                      {data.maritalStatus}
+                    </Badge>
+                  )}
+                </span>
               </div>
+
               <div className="flex items-center gap-2 text-gray-600 text-sm">
                 <span className="inline-flex items-center">
                   {/* <MapPin className="w-3.5 h-3.5 mr-1" /> */}
                   {data?.age || "—"}, {data?.UserCareerInfo?.jobTitle || "—"},{" "}
                   {data?.UserCareerInfo?.jobLocation || "—"}
                 </span>
-                {myProfile?.maritalStatus && (
-                  <Badge
-                    variant="secondary"
-                    className="bg-purple-100 text-purple-700"
-                  >
-                    {myProfile.maritalStatus}
-                  </Badge>
-                )}
               </div>
             </div>
           </div>
