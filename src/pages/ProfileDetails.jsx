@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '@/contexts/AppContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MapPin, Phone, GraduationCap, Briefcase, Shield, Sparkles, ArrowLeft, ArrowRight } from 'lucide-react';
+import { getData } from "@/store/utils";
 
 const Row = ({ label, value }) => (
   <div className="grid grid-cols-3 gap-3 py-2 border-b last:border-b-0">
@@ -17,6 +18,29 @@ const Row = ({ label, value }) => (
 const ProfileDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    getMatchesList();
+  }, []);
+
+  const getMatchesList = async () => {
+    try {
+      const response = await getData(`user/auth/users-opposite-gender`, null);
+      console.log("responsedsdd3232", response);
+      // return false;
+      setData(response);
+      // console.log(response)
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      //   setErrorMessage('Error fetching data');
+    } finally {
+      //   setIsLoadingOn(false);
+    }
+  };
+
+
   const { profiles, filteredProfiles, isSubscribed, subscribe } = useAppContext();
   const sourceList = (filteredProfiles && filteredProfiles.length > 0) ? filteredProfiles : profiles;
   const currentIndex = sourceList.findIndex(p => p.id === id);
@@ -32,7 +56,7 @@ const ProfileDetails = () => {
     return items;
   }, [profile]);
 
-  if (!profile) {
+  if (!profile) { 
     return (
       <div className="text-center py-16">
         <div className="text-xl text-gray-600">Profile not found.</div>
