@@ -67,12 +67,12 @@ const Matches = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-800 flex items-center">
           <Users className="w-6 h-6 mr-2 text-purple-600" />
-          Matches ({filteredProfiles.length})
+          Matches ({data?.totalItems})
         </h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredProfiles.map((profile) => (
+        {data?.users?.map((profile) => (
           <ProfileCard
             key={profile.id}
             profile={profile}

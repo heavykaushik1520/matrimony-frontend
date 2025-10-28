@@ -16,7 +16,7 @@ const ProfileCard = ({ profile, onViewDetails }) => {
         <div className="flex items-center space-x-4">
           <div className="relative w-16 h-16 rounded-full overflow-hidden shadow-lg">
             {profile.photo ? (
-              <img src={profile.photo} alt={profile.fullName} className={`w-full h-full object-cover ${!isSubscribed ? 'blur-sm' : ''}`} />
+              <img src={profile.photo} alt={profile.firstname + profile.lastname} className={`w-full h-full object-cover ${!isSubscribed ? 'blur-sm' : ''}`} />
             ) : (
               <div className={`w-full h-full bg-gradient-to-br from-purple-400 to-pink-400 ${!isSubscribed ? 'blur-sm' : ''}`} />
             )}
@@ -28,11 +28,11 @@ const ProfileCard = ({ profile, onViewDetails }) => {
           </div>
           <div className="flex-1">
             <h3 className="font-bold text-xl text-gray-800 group-hover:text-purple-600 transition-colors">
-              {profile.fullName}
+              {profile.firstname} {profile.lastname}
             </h3>
             <p className="text-gray-600 flex items-center">
               <MapPin className="w-4 h-4 mr-1" />
-              {profile.placeOfBirth}
+              {profile.birthLocation}
             </p>
           </div>
           <Badge variant="secondary" className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700">
@@ -44,11 +44,11 @@ const ProfileCard = ({ profile, onViewDetails }) => {
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div className="flex items-center">
             <GraduationCap className="w-4 h-4 mr-2 text-blue-500" />
-            <span className="text-gray-700">{profile.education}</span>
+            <span className="text-gray-700">{profile.UserCareerInfo.education}</span>
           </div>
           <div className="flex items-center">
             <Briefcase className="w-4 h-4 mr-2 text-green-500" />
-            <span className="text-gray-700">{profile.job}</span>
+            <span className="text-gray-700">{profile.UserCareerInfo.jobTitle}</span>
           </div>
         </div>
         <div className="flex justify-between items-center pt-3 border-t">
