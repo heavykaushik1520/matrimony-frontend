@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '@/contexts/AppContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MapPin, Phone, GraduationCap, Briefcase, Shield, Sparkles, ArrowLeft, ArrowRight } from 'lucide-react';
+import { getData } from "@/store/utils";
+import { formatDate, formatArray } from "@/lib/utils";
 
 const Row = ({ label, value }) => (
   <div className="grid grid-cols-3 gap-3 py-2 border-b last:border-b-0">
@@ -17,22 +19,62 @@ const Row = ({ label, value }) => (
 const ProfileDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { profiles, filteredProfiles, isSubscribed, subscribe } = useAppContext();
-  const sourceList = (filteredProfiles && filteredProfiles.length > 0) ? filteredProfiles : profiles;
-  const currentIndex = sourceList.findIndex(p => p.id === id);
+
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getMatchesList();
+  }, [id]);
+
+  const getMatchesList = async () => {
+    try {
+      setLoading(true);
+      const response = await getData(`user/auth/users-opposite-gender`, null);
+      console.log("Profile Details - API Response:", response);
+      console.log("Looking for profile with ID:", id);
+      setData(response);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const { isSubscribed, subscribe } = useAppContext();
+  
+  // Use the API data instead of AppContext profiles
+  const sourceList = data?.users || [];
+  
+  // Compare IDs directly (can be UUID string or number)
+  const currentIndex = sourceList.findIndex(p => String(p.id) === String(id));
   const profile = currentIndex >= 0 ? sourceList[currentIndex] : undefined;
   const hasNext = currentIndex >= 0 && currentIndex < sourceList.length - 1;
   const nextId = hasNext ? sourceList[currentIndex + 1].id : null;
+  
+  // Debug logging
+  console.log("Profile search - ID from URL:", id);
+  console.log("Profile search - Total users:", sourceList.length);
+  console.log("Profile search - Found at index:", currentIndex);
+  console.log("Profile search - Profile found:", profile ? 'Yes' : 'No');
   const highlights = useMemo(() => {
     const items = [];
-    if (profile?.education) items.push({ label: profile.education, icon: GraduationCap });
-    if (profile?.job) items.push({ label: profile.job, icon: Briefcase });
+    if (profile?.UserCareerInfo?.education) items.push({ label: profile.UserCareerInfo.education, icon: GraduationCap });
+    if (profile?.UserCareerInfo?.jobTitle) items.push({ label: profile.UserCareerInfo.jobTitle, icon: Briefcase });
     if (profile?.height) items.push({ label: `Height: ${profile.height}` });
-    if (profile?.bloodType) items.push({ label: `Blood: ${profile.bloodType}` });
+    if (profile?.bloodGroup) items.push({ label: `Blood: ${profile.bloodGroup}` });
     return items;
   }, [profile]);
 
-  if (!profile) {
+  if (loading) {
+    return (
+      <div className="text-center py-16">
+        <div className="text-xl text-gray-600">Loading profile...</div>
+      </div>
+    );
+  }
+
+  if (!profile) { 
     return (
       <div className="text-center py-16">
         <div className="text-xl text-gray-600">Profile not found.</div>
@@ -52,15 +94,15 @@ const ProfileDetails = () => {
             </button>
             <div className="relative w-20 h-20 rounded-full overflow-hidden shadow-xl">
               {profile.photo ? (
-                <img src={profile.photo} alt={profile.fullName} className={`w-full h-full object-cover ${!isSubscribed ? 'blur-sm' : ''}`} />
+                <img src={profile.photo} alt={`${profile.firstname} ${profile.lastname}`} className={`w-full h-full object-cover ${!isSubscribed ? 'blur-sm' : ''}`} />
               ) : (
                 <div className={`w-full h-full bg-gradient-to-br from-purple-400 to-pink-400 ${!isSubscribed ? 'blur-sm' : ''}`} />
               )}
             </div>
             <div className="flex-1">
-              <div className="text-2xl font-extrabold text-gray-900">{profile.fullName}</div>
+              <div className="text-2xl font-extrabold text-gray-900">{profile.firstname} {profile.lastname}</div>
               <div className="flex flex-wrap items-center gap-2 text-gray-600 mt-1">
-                <span className="inline-flex items-center"><MapPin className="w-4 h-4 mr-1" />{profile.placeOfBirth}</span>
+                <span className="inline-flex items-center"><MapPin className="w-4 h-4 mr-1" />{profile.birthLocation}</span>
                 <Badge variant="secondary" className="bg-purple-100 text-purple-700">{profile.maritalStatus}</Badge>
               </div>
               {highlights.length > 0 && (
@@ -108,27 +150,27 @@ const ProfileDetails = () => {
         <TabsContent value="personal">
           <Card><CardContent className="p-4">
             <div className="font-semibold text-gray-800 mb-2">Personal</div>
-            <Row label="Date of Birth" value={profile.dateOfBirth} />
+            <Row label="Date of Birth" value={formatDate(profile.dateOfBirth, 'short')} />
             <Row label="Time of Birth" value={profile.timeOfBirth} />
-            <Row label="Place of Birth" value={profile.placeOfBirth} />
+            <Row label="Place of Birth" value={profile.birthLocation} />
             <Row label="Height" value={profile.height} />
-            <Row label="Blood Type" value={profile.bloodType} />
-            <Row label="Wears Glasses" value={profile.glasses ? 'Yes' : 'No'} />
-            <Row label="Physical Ailment" value={profile.physicalAilment} />
+            <Row label="Blood Group" value={profile.bloodGroup} />
+            <Row label="Wears Glasses" value={profile.wearsGlasses ? 'Yes' : 'No'} />
+            <Row label="Physical Ailment" value={profile.physicalDisability} />
             <Row label="Address" value={profile.address} />
-            <Row label="Mobile" value={profile.mobile ? (isSubscribed ? profile.mobile : 'XXXXXXXXXX') : '—'} />
+            <Row label="Mobile" value={profile.phone ? (isSubscribed ? profile.phone : 'XXXXXXXXXX') : '—'} />
           </CardContent></Card>
         </TabsContent>
 
         <TabsContent value="career">
           <Card><CardContent className="p-4">
             <div className="font-semibold text-gray-800 mb-2">Career</div>
-            <Row label="Education" value={profile.education} />
-            <Row label="Job" value={profile.job} />
-            <Row label="Position" value={profile.position} />
-            <Row label="Salary" value={profile.salary} />
+            <Row label="Education" value={profile.UserCareerInfo?.education} />
+            <Row label="Job Title" value={profile.UserCareerInfo?.jobTitle} />
+            <Row label="Company" value={profile.UserCareerInfo?.company} />
+            <Row label="Salary" value={profile.UserCareerInfo?.annualSalary} />
             <Row label="Passport" value={profile.passport} />
-            <Row label="Hobbies" value={profile.hobbies} />
+            <Row label="Hobbies" value={formatArray(profile.hobbies)} />
           </CardContent></Card>
         </TabsContent>
 
@@ -150,9 +192,10 @@ const ProfileDetails = () => {
         <TabsContent value="family">
           <Card><CardContent className="p-4">
             <div className="font-semibold text-gray-800 mb-2">Family & Expectations</div>
-            <Row label="Father" value={profile.father} />
-            <Row label="Mother" value={profile.mother} />
-            <Row label="Brothers" value={profile.brother} />
+            <Row label="Father" value={profile.FamilyInfo.fatherName} />
+            <Row label="Mother" value={profile.FamilyInfo.motherName} />
+            <Row label="Brothers" value={profile.FamilyInfo.brothersCount} />
+            <Row label="Sisters" value={profile.FamilyInfo.sistersCount} />
             <Row label="Other Family" value={profile.otherFamily} />
             <Row label="Expected Status" value={profile.expectedMaritalStatus} />
             <Row label="Expected Height" value={profile.expectedHeight} />

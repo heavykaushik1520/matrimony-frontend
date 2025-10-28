@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Users, Heart } from 'lucide-react';
 import { useAppContext } from '@/contexts/AppContext';
 import SearchFilters from '@/components/SearchFilters';
@@ -6,10 +6,32 @@ import ProfileCard from '@/components/ProfileCard';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { getData } from "@/store/utils";
 
 const Matches = () => {
   const { filteredProfiles, filters, updateFilters, clearFilters, isSubscribed, subscribe } = useAppContext();
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    getMatchesList();
+  }, []);
+
+  const getMatchesList = async () => {
+    try {
+      const response = await getData(`user/auth/users-opposite-gender`, null);
+      console.log("responsedsdd3232", response);
+      // return false;
+      setData(response);
+      // console.log(response)
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      //   setErrorMessage('Error fetching data');
+    } finally {
+      //   setIsLoadingOn(false);
+    }
+  };
+
 
   return (
     <div className="space-y-6">
@@ -45,12 +67,12 @@ const Matches = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-800 flex items-center">
           <Users className="w-6 h-6 mr-2 text-purple-600" />
-          Matches ({filteredProfiles.length})
+          Matches ({data?.totalItems})
         </h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredProfiles.map((profile) => (
+        {data?.users?.map((profile) => (
           <ProfileCard
             key={profile.id}
             profile={profile}
