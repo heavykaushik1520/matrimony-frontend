@@ -263,7 +263,7 @@ const MyProfile = () => {
           <div className="text-base font-semibold text-gray-800 mb-3">
             Basic Information
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {basicRows.map((row, i) => (
               <div key={i} className="rounded-lg border p-3 bg-white">
                 <div className="text-xs uppercase tracking-wide text-gray-500">
