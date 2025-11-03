@@ -75,7 +75,7 @@ const router = createBrowserRouter(
     },
   ],
   {
-    basename: "/hridaysparshi", // 👈 ADD THIS
+    basename: "/hridaysparshi/", // 👈 ADD THIS
   }
 );
 

@@ -16,11 +16,7 @@ const ProfileCard = ({ profile, onViewDetails }) => {
         <div className="flex items-center space-x-4">
           <div className="relative w-16 h-16 rounded-full overflow-hidden shadow-lg">
             {profile.photo ? (
-<<<<<<< HEAD
-              <img src={profile.photo} alt={profile.firstname} className={`w-full h-full object-cover ${!isSubscribed ? 'blur-sm' : ''}`} />
-=======
               <img src={profile.photo} alt={profile.firstname + profile.lastname} className={`w-full h-full object-cover ${!isSubscribed ? 'blur-sm' : ''}`} />
->>>>>>> origin/main
             ) : (
               <div className={`w-full h-full bg-gradient-to-br from-purple-400 to-pink-400 ${!isSubscribed ? 'blur-sm' : ''}`} />
             )}
@@ -36,15 +32,11 @@ const ProfileCard = ({ profile, onViewDetails }) => {
             </h3>
             <p className="text-gray-600 flex items-center">
               <MapPin className="w-4 h-4 mr-1" />
-<<<<<<< HEAD
-              {profile?.birthLocation || "—"}
-=======
               {profile.birthLocation}
->>>>>>> origin/main
             </p>
           </div>
           <Badge variant="secondary" className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700">
-            {profile?.maritalStatus  || "—"}
+            {profile.maritalStatus}
           </Badge>
         </div>
       </CardHeader>
@@ -52,24 +44,16 @@ const ProfileCard = ({ profile, onViewDetails }) => {
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div className="flex items-center">
             <GraduationCap className="w-4 h-4 mr-2 text-blue-500" />
-<<<<<<< HEAD
-            <span className="text-gray-700">{profile?.UserCareerInfo?.education}</span>
-          </div>
-          <div className="flex items-center">
-            <Briefcase className="w-4 h-4 mr-2 text-green-500" />
-            <span className="text-gray-700">{profile?.UserCareerInfo?.jobTitle}</span>
-=======
             <span className="text-gray-700">{profile.UserCareerInfo.education}</span>
           </div>
           <div className="flex items-center">
             <Briefcase className="w-4 h-4 mr-2 text-green-500" />
             <span className="text-gray-700">{profile.UserCareerInfo.jobTitle}</span>
->>>>>>> origin/main
           </div>
         </div>
         <div className="flex justify-between items-center pt-3 border-t">
           <div className="text-sm text-gray-600">
-            <span className="font-semibold">Height:</span> {profile.height} cm
+            <span className="font-semibold">Height:</span> {profile.height}cm
           </div>
           <Button 
             onClick={() => navigate(`/profiles/${profile.id}`)}
@@ -86,5 +70,4 @@ const ProfileCard = ({ profile, onViewDetails }) => {
 };
 
 export default ProfileCard;
-
 

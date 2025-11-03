@@ -14,8 +14,10 @@ const Matches = () => {
     filters,
     updateFilters,
     clearFilters,
-    isSubscribed,
-    subscribe,
+    membershipActive,
+    subscriptionActive,
+    buyMembership,
+    buySubscription,
   } = useAppContext();
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [data, setData] = useState([]);
@@ -47,7 +49,7 @@ const Matches = () => {
           <div>
             <div className="flex items-center gap-2">
               <span className="font-semibold text-gray-800">Membership</span>
-              {isSubscribed ? (
+              {membershipActive ? (
                 <Badge
                   variant="secondary"
                   className="bg-emerald-100 text-emerald-700"
@@ -59,24 +61,24 @@ const Matches = () => {
                   variant="secondary"
                   className="bg-amber-100 text-amber-700"
                 >
-                  Optional
+                  Required
                 </Badge>
               )}
             </div>
             <div className="text-sm text-gray-600 mt-1">
-              {isSubscribed
-                ? "Membership active. You can view profile photos and mobile numbers."
-                : "Subscribe to unlock profile photos and mobile numbers."}
+              {membershipActive
+                ? "Membership active. Buy subscription to view profiles."
+                : "Buy membership (₹499) to enable subscriptions."}
             </div>
           </div>
-          {!isSubscribed && (
-            <Button
-              onClick={subscribe}
-              className="bg-gradient-to-r from-purple-600 to-pink-600"
-            >
-              Subscribe for ₹599
-            </Button>
-          )}
+          <div className="flex gap-2">
+            {!membershipActive && (
+              <Button onClick={buyMembership} className="bg-purple-600 text-white">Buy Membership ₹499</Button>
+            )}
+            {membershipActive && !subscriptionActive && (
+              <Button onClick={buySubscription} className="bg-pink-600 text-white">Buy Subscription ₹99</Button>
+            )}
+          </div>
         </CardContent>
       </Card>
 
@@ -93,15 +95,23 @@ const Matches = () => {
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data?.users?.map((profile) => (
-          <ProfileCard
-            key={profile.id}
-            profile={profile}
-            onViewDetails={setSelectedProfile}
-          />
-        ))}
-      </div>
+      {!subscriptionActive ? (
+        <Card>
+          <CardContent className="p-6 text-center text-gray-700">
+            You need an active subscription to view profiles. Please purchase a subscription.
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {data?.users?.map((profile) => (
+            <ProfileCard
+              key={profile.id}
+              profile={profile}
+              onViewDetails={setSelectedProfile}
+            />
+          ))}
+        </div>
+      )}
 
       {filteredProfiles.length === 0 && (
         <div className="text-center py-12">

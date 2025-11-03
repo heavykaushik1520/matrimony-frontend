@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import { postDataWithoutToken } from '@/store/utils';
+import { postDataWithoutToken, postData, getData } from '@/store/utils';
+import { loadRazorpayCheckout } from '@/lib/utils';
 
 const defaultAppContext = {
   profiles: [],
@@ -14,8 +15,10 @@ const defaultAppContext = {
   user: null,
   login: async () => false,
   logout: () => {},
-  isSubscribed: false,
-  subscribe: async () => {},
+  membershipActive: false,
+  subscriptionActive: false,
+  buyMembership: async () => {},
+  buySubscription: async () => {},
   myProfile: null,
 };
 
@@ -101,7 +104,8 @@ export const AppProvider = ({ children }) => {
   const [filters, setFilters] = useState({});
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [membershipActive, setMembershipActive] = useState(false);
+  const [subscriptionActive, setSubscriptionActive] = useState(false);
   const [myProfile, setMyProfile] = useState(null);
 
   useEffect(() => {
@@ -115,8 +119,18 @@ export const AppProvider = ({ children }) => {
         }
       } catch {}
     }
-    const sub = localStorage.getItem('hspvm_sub');
-    if (sub === '1') setIsSubscribed(true);
+    (async () => {
+      try {
+        const status = await getData('membership/status');
+        if (status && status.statusCode === 200) {
+          // API returns flat fields: is_membership_active, has_active_subscription
+          const mem = typeof status.is_membership_active !== 'undefined' ? status.is_membership_active : (status.membership?.status === 'active');
+          const sub = typeof status.has_active_subscription !== 'undefined' ? status.has_active_subscription : (status.subscription?.status === 'active');
+          setMembershipActive(!!mem);
+          setSubscriptionActive(!!sub);
+        }
+      } catch {}
+    })();
     const mine = localStorage.getItem('hspvm_myprofile');
     if (mine) {
       try { setMyProfile(JSON.parse(mine)); } catch {}
@@ -205,12 +219,182 @@ export const AppProvider = ({ children }) => {
     toast({ title: 'Signed out', description: 'You have been logged out.' });
   };
 
-  // Subscription
+  // Razorpay Checkout helper
+  const openRazorpay = async ({ key, amount, orderId, description }) => {
+    const loaded = await loadRazorpayCheckout();
+    if (!loaded || typeof window === 'undefined' || !window.Razorpay) {
+      toast({ title: 'Payment error', description: 'Unable to load payment gateway. Please try again.' });
+      return null;
+    }
+
+    return new Promise((resolve, reject) => {
+      const options = {
+        key,
+        amount,
+        currency: 'INR',
+        name: 'Hridaysparshi',
+        description: description || 'Payment',
+        order_id: orderId,
+        handler: function (response) {
+          resolve(response);
+        },
+        modal: {
+          ondismiss: function () {
+            reject(new Error('Payment cancelled'));
+          }
+        },
+        theme: { color: '#7c3aed' }
+      };
+      const rz = new window.Razorpay(options);
+      rz.on('payment.failed', function () {
+        reject(new Error('Payment failed'));
+      });
+      rz.open();
+    });
+  };
+
+  // Combined flow retained for legacy callers; ensures membership then buys subscription
   const subscribe = async () => {
-    await new Promise(r => setTimeout(r, 500));
-    setIsSubscribed(true);
-    localStorage.setItem('hspvm_sub', '1');
-    toast({ title: 'Subscription activated', description: 'Thank you for subscribing (₹599).' });
+    try {
+      // 1) Check current membership/subscription status if available
+      let hasMembership = false;
+      try {
+        const status = await getData('membership/status');
+        if (status && status.statusCode === 200) {
+          hasMembership = !!(status.membership?.status === 'active');
+        }
+      } catch {}
+
+      // 2) If no membership, create membership order and pay
+      if (!hasMembership) {
+        const order = await postData('membership/order/membership', {});
+        if (!order || order.statusCode !== 200) {
+          toast({ title: 'Membership error', description: order?.message || 'Unable to create membership order.' });
+          return false;
+        }
+        const payResp = await openRazorpay({
+          key: order.key_id,
+          amount: order.amount,
+          orderId: order.orderId,
+          description: 'Annual Membership (₹499)'
+        });
+        if (!payResp) return false;
+
+        const verifyMembership = await postData('membership/verify/membership', {
+          razorpay_order_id: payResp.razorpay_order_id,
+          razorpay_payment_id: payResp.razorpay_payment_id,
+          razorpay_signature: payResp.razorpay_signature,
+        });
+        if (!verifyMembership || verifyMembership.statusCode !== 200) {
+          toast({ title: 'Verification failed', description: verifyMembership?.message || 'Membership verification failed.' });
+          return false;
+        }
+        hasMembership = true;
+        setMembershipActive(true);
+        toast({ title: 'Membership activated', description: 'Your membership is now active for 1 year.' });
+      }
+
+      // 3) Create subscription order and pay (requires active membership)
+      const subOrder = await postData('membership/order/subscription', {});
+      if (!subOrder || subOrder.statusCode !== 200) {
+        toast({ title: 'Subscription error', description: subOrder?.message || 'Unable to create subscription order.' });
+        return false;
+      }
+      const subPay = await openRazorpay({
+        key: subOrder.key_id,
+        amount: subOrder.amount,
+        orderId: subOrder.orderId,
+        description: '2-Day Subscription (₹99)'
+      });
+      if (!subPay) return false;
+
+      const verifySub = await postData('membership/verify/subscription', {
+        razorpay_order_id: subPay.razorpay_order_id,
+        razorpay_payment_id: subPay.razorpay_payment_id,
+        razorpay_signature: subPay.razorpay_signature,
+      });
+      if (!verifySub || verifySub.statusCode !== 200) {
+        toast({ title: 'Verification failed', description: verifySub?.message || 'Subscription verification failed.' });
+        return false;
+      }
+
+      setSubscriptionActive(true);
+      toast({ title: 'Subscription activated', description: 'You can now view profiles for 2 days.' });
+      return true;
+    } catch (e) {
+      toast({ title: 'Payment cancelled', description: 'You closed the payment window.' });
+      return false;
+    }
+  };
+
+  // Purchase membership only
+  const buyMembership = async () => {
+    try {
+      const order = await postData('membership/order/membership', {});
+      if (!order || order.statusCode !== 200) {
+        toast({ title: 'Membership error', description: order?.message || 'Unable to create membership order.' });
+        return false;
+      }
+      const payResp = await openRazorpay({
+        key: order.key_id,
+        amount: order.amount,
+        orderId: order.orderId,
+        description: 'Annual Membership (₹499)'
+      });
+      if (!payResp) return false;
+      const verify = await postData('membership/verify/membership', {
+        razorpay_order_id: payResp.razorpay_order_id,
+        razorpay_payment_id: payResp.razorpay_payment_id,
+        razorpay_signature: payResp.razorpay_signature,
+      });
+      if (!verify || verify.statusCode !== 200) {
+        toast({ title: 'Verification failed', description: verify?.message || 'Membership verification failed.' });
+        return false;
+      }
+      setMembershipActive(true);
+      toast({ title: 'Membership activated', description: 'Your membership is now active for 1 year.' });
+      return true;
+    } catch (e) {
+      toast({ title: 'Payment cancelled', description: 'You closed the payment window.' });
+      return false;
+    }
+  };
+
+  // Purchase subscription only (requires active membership)
+  const buySubscription = async () => {
+    try {
+      if (!membershipActive) {
+        toast({ title: 'Membership required', description: 'Please buy membership before subscribing.' });
+        return false;
+      }
+      const order = await postData('membership/order/subscription', {});
+      if (!order || order.statusCode !== 200) {
+        toast({ title: 'Subscription error', description: order?.message || 'Unable to create subscription order.' });
+        return false;
+      }
+      const payResp = await openRazorpay({
+        key: order.key_id,
+        amount: order.amount,
+        orderId: order.orderId,
+        description: '2-Day Subscription (₹99)'
+      });
+      if (!payResp) return false;
+      const verify = await postData('membership/verify/subscription', {
+        razorpay_order_id: payResp.razorpay_order_id,
+        razorpay_payment_id: payResp.razorpay_payment_id,
+        razorpay_signature: payResp.razorpay_signature,
+      });
+      if (!verify || verify.statusCode !== 200) {
+        toast({ title: 'Verification failed', description: verify?.message || 'Subscription verification failed.' });
+        return false;
+      }
+      setSubscriptionActive(true);
+      toast({ title: 'Subscription activated', description: 'You can now view profiles for 2 days.' });
+      return true;
+    } catch (e) {
+      toast({ title: 'Payment cancelled', description: 'You closed the payment window.' });
+      return false;
+    }
   };
 
   const filteredProfiles = profiles.filter(profile => {
@@ -243,8 +427,11 @@ export const AppProvider = ({ children }) => {
         user,
         login,
         logout,
-        isSubscribed,
+        membershipActive,
+        subscriptionActive,
         subscribe,
+        buyMembership,
+        buySubscription,
         myProfile,
       }}
     >
