@@ -18,85 +18,154 @@ const SearchFilters = ({ filters, onFiltersChange, onClearFilters }) => {
   };
 
   const activeBadges = [];
-  if (filters.gender) activeBadges.push({ key: 'gender', label: filters.gender });
+  if (filters.religion) activeBadges.push({ key: 'religion', label: `Religion: ${filters.religion}` });
+  if (filters.caste) activeBadges.push({ key: 'caste', label: `Caste: ${filters.caste}` });
+  if (filters.community) activeBadges.push({ key: 'community', label: `Community: ${filters.community}` });
   if (filters.maritalStatus) activeBadges.push({ key: 'maritalStatus', label: filters.maritalStatus });
-  if (filters.education) activeBadges.push({ key: 'education', label: filters.education });
-  if (filters.ageRange) activeBadges.push({ key: 'ageRange', label: `${filters.ageRange[0]}-${filters.ageRange[1]}` });
+  if (filters.skinTone) activeBadges.push({ key: 'skinTone', label: `Skin: ${filters.skinTone}` });
+  if (filters.ras) activeBadges.push({ key: 'ras', label: `Ras: ${filters.ras}` });
+  if (filters.gan) activeBadges.push({ key: 'gan', label: `Gan: ${filters.gan}` });
+  if (filters.mangal) activeBadges.push({ key: 'mangal', label: `Mangal: ${filters.mangal}` });
+  if (filters.education) activeBadges.push({ key: 'education', label: `Education: ${filters.education}` });
+  if (filters.jobSector) activeBadges.push({ key: 'jobSector', label: `Job Sector: ${filters.jobSector}` });
+  if (filters.jobLocation) activeBadges.push({ key: 'jobLocation', label: `Location: ${filters.jobLocation}` });
+  if (filters.annualSalary) activeBadges.push({ key: 'annualSalary', label: `Salary: ${filters.annualSalary}` });
 
   return (
     <Card className="border bg-white/80 backdrop-blur">
       <CardContent className="p-4 space-y-4">
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm text-gray-600 w-28">Looking for</span>
-            {['Male','Female'].map(v => (
-              <button
-                key={v}
-                onClick={() => toggleChip('gender', v)}
-                className={`${pillBase} ${filters.gender === v ? 'bg-purple-600 text-white border-purple-600' : 'border-gray-300 hover:bg-gray-50'}`}
-              >{v}</button>
-            ))}
-            <button
-              onClick={() => updateFilter('gender', undefined)}
-              className={`${pillBase} border-gray-200 text-gray-600`}
-            >Any</button>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm text-gray-600 w-28">Status</span>
-            {['Single','Widow','Widower','Divorcee'].map(v => (
-              <button
-                key={v}
-                onClick={() => toggleChip('maritalStatus', v)}
-                className={`${pillBase} ${filters.maritalStatus === v ? 'bg-pink-600 text-white border-pink-600' : 'border-gray-300 hover:bg-gray-50'}`}
-              >{v}</button>
-            ))}
-            <button
-              onClick={() => updateFilter('maritalStatus', undefined)}
-              className={`${pillBase} border-gray-200 text-gray-600`}
-            >Any</button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
-            <div className="col-span-1">
-              <Label htmlFor="education" className="text-gray-700">Education</Label>
-              <Input
-                id="education"
-                value={filters.education || ''}
-                onChange={(e) => updateFilter('education', e.target.value || undefined)}
-                placeholder="e.g., Engineering, MBA"
-              />
+        <div className="flex flex-col gap-4">
+          {/* Personal Details Section */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-gray-700 border-b pb-2">Personal Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="religion" className="text-gray-700">Religion</Label>
+                <Input
+                  id="religion"
+                  value={filters.religion || ''}
+                  onChange={(e) => updateFilter('religion', e.target.value || undefined)}
+                  placeholder="e.g., Hindu, Muslim, Christian"
+                />
+              </div>
+              <div>
+                <Label htmlFor="caste" className="text-gray-700">Caste</Label>
+                <Input
+                  id="caste"
+                  value={filters.caste || ''}
+                  onChange={(e) => updateFilter('caste', e.target.value || undefined)}
+                  placeholder="e.g., Kunbi, Maratha"
+                />
+              </div>
+              <div>
+                <Label htmlFor="community" className="text-gray-700">Community</Label>
+                <Input
+                  id="community"
+                  value={filters.community || ''}
+                  onChange={(e) => updateFilter('community', e.target.value || undefined)}
+                  placeholder="e.g., Hindi, Marathi"
+                />
+              </div>
+              <div>
+                <Label htmlFor="skinTone" className="text-gray-700">Skin Tone</Label>
+                <Input
+                  id="skinTone"
+                  value={filters.skinTone || ''}
+                  onChange={(e) => updateFilter('skinTone', e.target.value || undefined)}
+                  placeholder="e.g., Light, Medium, Dark"
+                />
+              </div>
             </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm text-gray-600 w-28">Marital Status</span>
+              {['Never Married', 'Widow', 'Widower', 'Divorcee'].map(v => (
+                <button
+                  key={v}
+                  onClick={() => toggleChip('maritalStatus', v)}
+                  className={`${pillBase} ${filters.maritalStatus === v ? 'bg-pink-600 text-white border-pink-600' : 'border-gray-300 hover:bg-gray-50'}`}
+                >{v}</button>
+              ))}
+              <button
+                onClick={() => updateFilter('maritalStatus', undefined)}
+                className={`${pillBase} border-gray-200 text-gray-600`}
+              >Any</button>
+            </div>
+          </div>
 
-            <div className="md:col-span-2">
-              <Label className="text-gray-700">Age range</Label>
-              <div className="flex items-center gap-2">
+          {/* Astrology Section */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-gray-700 border-b pb-2">Astrology</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <Label htmlFor="ras" className="text-gray-700">Ras</Label>
                 <Input
-                  type="number"
-                  value={filters.ageRange?.[0] || ''}
-                  onChange={(e) => {
-                    const minAge = e.target.value ? parseInt(e.target.value) : undefined;
-                    const maxAge = filters.ageRange?.[1];
-                    updateFilter('ageRange', (minAge !== undefined || maxAge !== undefined) ? [minAge || 18, maxAge || 60] : undefined);
-                  }}
-                  placeholder="Min"
-                  min="18"
+                  id="ras"
+                  value={filters.ras || ''}
+                  onChange={(e) => updateFilter('ras', e.target.value || undefined)}
+                  placeholder="e.g., Virgo, Aries"
                 />
-                <span className="text-gray-500">to</span>
+              </div>
+              <div>
+                <Label htmlFor="gan" className="text-gray-700">Gan</Label>
                 <Input
-                  type="number"
-                  value={filters.ageRange?.[1] || ''}
-                  onChange={(e) => {
-                    const maxAge = e.target.value ? parseInt(e.target.value) : undefined;
-                    const minAge = filters.ageRange?.[0];
-                    updateFilter('ageRange', (minAge !== undefined || maxAge !== undefined) ? [minAge || 18, maxAge || 60] : undefined);
-                  }}
-                  placeholder="Max"
-                  max="80"
+                  id="gan"
+                  value={filters.gan || ''}
+                  onChange={(e) => updateFilter('gan', e.target.value || undefined)}
+                  placeholder="e.g., Deva, Manushya"
                 />
-                {filters.ageRange && (
-                  <span className="text-sm text-gray-600">Selected: {filters.ageRange[0]} - {filters.ageRange[1]}</span>
-                )}
+              </div>
+              <div>
+                <Label htmlFor="mangal" className="text-gray-700">Mangal</Label>
+                <Input
+                  id="mangal"
+                  value={filters.mangal || ''}
+                  onChange={(e) => updateFilter('mangal', e.target.value || undefined)}
+                  placeholder="e.g., Partial, Full"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Career Section */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-gray-700 border-b pb-2">Career</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="education" className="text-gray-700">Education</Label>
+                <Input
+                  id="education"
+                  value={filters.education || ''}
+                  onChange={(e) => updateFilter('education', e.target.value || undefined)}
+                  placeholder="e.g., Engineering, MBA, Diploma"
+                />
+              </div>
+              <div>
+                <Label htmlFor="jobSector" className="text-gray-700">Job Sector</Label>
+                <Input
+                  id="jobSector"
+                  value={filters.jobSector || ''}
+                  onChange={(e) => updateFilter('jobSector', e.target.value || undefined)}
+                  placeholder="e.g., Private, Government"
+                />
+              </div>
+              <div>
+                <Label htmlFor="jobLocation" className="text-gray-700">Job Location</Label>
+                <Input
+                  id="jobLocation"
+                  value={filters.jobLocation || ''}
+                  onChange={(e) => updateFilter('jobLocation', e.target.value || undefined)}
+                  placeholder="e.g., Mumbai, Pune"
+                />
+              </div>
+              <div>
+                <Label htmlFor="annualSalary" className="text-gray-700">Annual Salary (₹)</Label>
+                <Input
+                  id="annualSalary"
+                  type="number"
+                  value={filters.annualSalary || ''}
+                  onChange={(e) => updateFilter('annualSalary', e.target.value || undefined)}
+                  placeholder="e.g., 500000"
+                />
               </div>
             </div>
           </div>
