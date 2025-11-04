@@ -71,7 +71,7 @@ const Contact = () => {
               }} placeholder="Describe your query..." rows={6} />
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-end ">
               <Button type="submit" disabled={submitting}>{submitting ? 'Sending...' : 'Send message'}</Button>
             </div>
           </form>

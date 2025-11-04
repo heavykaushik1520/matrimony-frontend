@@ -26,7 +26,7 @@ const CareerTab = ({ formData, updateField }) => {
             <SelectContent>
               <SelectItem value="10th">10th</SelectItem>
               <SelectItem value="12th">12th</SelectItem>
-              <SelectItem value="Freelance">Freelance</SelectItem>
+              <SelectItem value="Diploma">Diploma</SelectItem>
               <SelectItem value="Graduation">Graduation</SelectItem>
               <SelectItem value="Post-Graduation">Post-Graduation</SelectItem>
             </SelectContent>
@@ -87,7 +87,7 @@ const CareerTab = ({ formData, updateField }) => {
               <SelectItem value="1 - 3 lac">1 - 3 lac</SelectItem>
               <SelectItem value="3 - 5 lac">3 - 5 lac</SelectItem>
               <SelectItem value="5 - 7.5 lac">5 - 7.5 lac</SelectItem>
-               <SelectItem value="3 - 5 lac">7.5 - 10 lac</SelectItem>
+               <SelectItem value="7.5 - 10 lac">7.5 - 10 lac</SelectItem>
               <SelectItem value="Above 10 lac">Above 10 lac</SelectItem>
              
             </SelectContent>

@@ -29,41 +29,55 @@ const RequireAuth = ({ children }) => {
 };
 
 const queryClient = new QueryClient();
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: (
+        <AppProvider>
+          <AppLayout />
+        </AppProvider>
+      ),
+      children: [
+        { index: true, element: <Index /> },
+        { path: "about", element: <About /> },
+        { path: "contact", element: <Contact /> },
+        { path: "login", element: <SignIn /> },
+        { path: "signup", element: <SignUp /> },
+        {
+          path: "matches",
+          element: (
+            <RequireAuth>
+              <Matches />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "profiles/:id",
+          element: (
+            <RequireAuth>
+              <ProfileDetails />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "me",
+          element: (
+            <RequireAuth>
+              <MyProfile />
+            </RequireAuth>
+          ),
+        },
+        { path: "privacy", element: <Privacy /> },
+        { path: "terms", element: <Terms /> },
+        { path: "*", element: <NotFound /> },
+      ],
+    },
+  ],
   {
-    path: "/",
-    element: (
-      <AppProvider>
-        <AppLayout />
-      </AppProvider>
-    ),
-    children: [
-      { index: true, element: <Index /> },
-      { path: "about", element: <About /> },
-      { path: "contact", element: <Contact /> },
-      { path: "login", element: <SignIn /> },
-      { path: "signup", element: <SignUp /> },
-      { path: "matches", element: (
-        <RequireAuth>
-          <Matches />
-        </RequireAuth>
-      ) },
-      { path: "profiles/:id", element: (
-        <RequireAuth>
-          <ProfileDetails />
-        </RequireAuth>
-      ) },
-      { path: "me", element: (
-        <RequireAuth>
-          <MyProfile />
-        </RequireAuth>
-      ) },
-      { path: "privacy", element: <Privacy /> },
-      { path: "terms", element: <Terms /> },
-      { path: "*", element: <NotFound /> },
-    ],
-  },
-]);
+    basename: "/hridaysparshi/", // 👈 ADD THIS
+  }
+);
 
 const App = () => (
   <ThemeProvider defaultTheme="light">
@@ -78,5 +92,3 @@ const App = () => (
 );
 
 export default App;
-
-

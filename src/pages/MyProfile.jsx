@@ -8,7 +8,7 @@ import { MapPin, Phone } from "lucide-react";
 import { getData } from "@/store/utils";
 
 const MyProfile = () => {
-  const { myProfile, saveMyProfile, isSubscribed, subscribe, user } =
+  const { myProfile, saveMyProfile, membershipActive, subscriptionActive, buyMembership, buySubscription, user } =
     useAppContext();
   const [editing, setEditing] = useState(false);
   const [data, setData] = useState(null);
@@ -245,15 +245,12 @@ const MyProfile = () => {
             </div>
           </div>
           <div className="space-x-2">
-            {!isSubscribed && (
-              <Button
-                onClick={subscribe}
-                className="bg-gradient-to-r from-purple-600 to-pink-600"
-              >
-                Subscribe ₹599
-              </Button>
+            {!membershipActive && (
+              <Button onClick={buyMembership} className="bg-purple-600 text-white">Buy Membership ₹499</Button>
             )}
-            {/* View-only: no edit button as requested */}
+            {membershipActive && !subscriptionActive && (
+              <Button onClick={buySubscription} className="bg-pink-600 text-white">Buy Subscription ₹99</Button>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -263,7 +260,7 @@ const MyProfile = () => {
           <div className="text-base font-semibold text-gray-800 mb-3">
             Basic Information
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {basicRows.map((row, i) => (
               <div key={i} className="rounded-lg border p-3 bg-white">
                 <div className="text-xs uppercase tracking-wide text-gray-500">
