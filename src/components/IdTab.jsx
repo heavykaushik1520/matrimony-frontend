@@ -13,8 +13,6 @@ import {
 const IdTab = ({ formData, updateField }) => {
   return (
     <div className="space-y-4">
-     
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="idProof">Id Proof File</Label>
@@ -34,12 +32,14 @@ const IdTab = ({ formData, updateField }) => {
             }}
           />
           {formData.idProofFileName && (
-            <p className="text-xs text-gray-500 mt-1">{formData.idProofFileName}</p>
+            <p className="text-xs text-gray-500 mt-1">
+              {formData.idProofFileName}
+            </p>
           )}
         </div>
 
-         <div>
-          <Label htmlFor="password">password</Label>
+        <div>
+          <Label htmlFor="password">Password</Label>
           <Input
             id="password"
             value={formData.password || ""}
@@ -49,17 +49,17 @@ const IdTab = ({ formData, updateField }) => {
         </div>
 
         <div>
-          <Label htmlFor="termsAccepted">Terms</Label>
-          <Input
+          <input
+            type="checkbox"
             id="termsAccepted"
-            value={formData.termsAccepted || ""}
-            onChange={(e) => updateField("termsAccepted", e.target.value)}
-            placeholder="Enter Terms"
+            className="mr-2"
+            checked={formData.termsAccepted || false}
+            onChange={(e) => updateField("termsAccepted", e.target.checked)}
           />
+          <Label htmlFor="termsAccepted ">Accept Terms And Conditions</Label>
+          
         </div>
-
       </div>
-
     </div>
   );
 };

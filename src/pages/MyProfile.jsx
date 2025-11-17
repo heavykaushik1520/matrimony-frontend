@@ -244,14 +244,14 @@ const MyProfile = () => {
               </div>
             </div>
           </div>
-          <div className="space-x-2">
+          {/* <div className="space-x-2">
             {!membershipActive && (
-              <Button onClick={buyMembership} className="bg-purple-600 text-white">Buy Membership ₹499</Button>
+              <Button onClick={buyMembership} className="bg-purple-600 text-white">Buy membership Rs.999</Button>
             )}
             {membershipActive && !subscriptionActive && (
               <Button onClick={buySubscription} className="bg-pink-600 text-white">Buy Subscription ₹99</Button>
             )}
-          </div>
+          </div> */}
         </CardContent>
       </Card>
 

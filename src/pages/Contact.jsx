@@ -83,7 +83,7 @@ const Contact = () => {
           <CardContent className="p-5">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-800"><Phone className="w-4 h-4 text-purple-600" /> +91 98923 52498 / 87670 04239</div>
+                <div className="flex items-center gap-2 text-gray-800"><Phone className="w-4 h-4 text-purple-600" /> +91 8767319137</div>
                 <Button variant="outline" size="sm" onClick={() => { navigator.clipboard.writeText('+919892352498'); toast({ title: 'Copied' }); }}><Copy className="w-4 h-4 mr-1" />Copy</Button>
               </div>
               <div className="flex items-center justify-between">

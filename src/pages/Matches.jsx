@@ -1,6 +1,8 @@
+
 import React, { useEffect, useState, useCallback } from 'react';
 import { Users, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAppContext } from '@/contexts/AppContext';
+import { useNavigate } from 'react-router-dom';
 import SearchFilters from '@/components/SearchFilters';
 import ProfileCard from '@/components/ProfileCard';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { getData } from "@/store/utils";
 
 const Matches = () => {
+  const navigate = useNavigate();
   const {
     filters,
     updateFilters,
@@ -59,12 +62,16 @@ const Matches = () => {
         const url = `user/auth/users-opposite-gender-card/filter?${queryParams.toString()}`;
         response = await getData(url, null);
       } else {
-        // Use regular API when no filters
-        response = await getData(`user/auth/users-opposite-gender`, null);
+        // Use card API to get all profiles in card format when no filters are applied
+        const queryParams = new URLSearchParams();
+        queryParams.append('limit', limit);
+        queryParams.append('page', page);
+        const url = `user/auth/users-opposite-gender-card?${queryParams.toString()}`;
+        response = await getData(url, null);
       }
       
-      if (response && response.statusCode === 200) {
-        // Handle both response formats
+      // Handle response - filter API returns { users, totalItems, totalPages, currentPage }
+      if (response) {
         if (response.users) {
           setData({
             users: response.users,
@@ -72,13 +79,21 @@ const Matches = () => {
             totalPages: response.totalPages || 1,
             currentPage: response.currentPage || page
           });
-        } else {
-          // Fallback for regular API response
+        } else if (Array.isArray(response)) {
+          // Fallback for array response
           setData({
-            users: Array.isArray(response) ? response : (response.users || []),
-            totalItems: response.totalItems || (Array.isArray(response) ? response.length : 0),
-            totalPages: response.totalPages || 1,
+            users: response,
+            totalItems: response.length,
+            totalPages: 1,
             currentPage: page
+          });
+        } else {
+          // Handle other response formats
+          setData({
+            users: response.users || [],
+            totalItems: response.totalItems || 0,
+            totalPages: response.totalPages || 1,
+            currentPage: response.currentPage || page
           });
         }
       }
@@ -127,16 +142,18 @@ const Matches = () => {
             </div>
             <div className="text-sm text-gray-600 mt-1">
               {membershipActive
-                ? "Membership active. Buy subscription to view profiles."
-                : "Buy membership (₹499) to enable subscriptions."}
+                ? "Membership active. You can view contact information."
+                : "View profiles freely. Subscribe to see contact details."}
             </div>
           </div>
           <div className="flex gap-2">
             {!membershipActive && (
-              <Button onClick={buyMembership} className="bg-purple-600 text-white">Buy Membership ₹499</Button>
-            )}
-            {membershipActive && !subscriptionActive && (
-              <Button onClick={buySubscription} className="bg-pink-600 text-white">Buy Subscription ₹99</Button>
+              <Button 
+                onClick={() => navigate('/plans')} 
+                className="bg-purple-600 text-white"
+              >
+                View Plans
+              </Button>
             )}
           </div>
         </CardContent>
@@ -162,12 +179,6 @@ const Matches = () => {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
               <span className="ml-3">Loading profiles...</span>
             </div>
-          </CardContent>
-        </Card>
-      ) : !subscriptionActive ? (
-        <Card>
-          <CardContent className="p-6 text-center text-gray-700">
-            You need an active subscription to view profiles. Please purchase a subscription.
           </CardContent>
         </Card>
       ) : data?.users?.length === 0 ? (
@@ -231,3 +242,5 @@ const Matches = () => {
 };
 
 export default Matches;
+
+

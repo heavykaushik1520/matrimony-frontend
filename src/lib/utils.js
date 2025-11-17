@@ -45,42 +45,51 @@ export function formatArray(value, separator = ', ') {
   try {
     // If it's already a string, try to parse it as JSON
     if (typeof value === 'string') {
-      try {
-        const parsed = JSON.parse(value);
-        if (Array.isArray(parsed)) {
-          return parsed.join(separator);
+      // Check if it looks like a JSON array string
+      const trimmed = value.trim();
+      if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (Array.isArray(parsed)) {
+            return parsed.filter(item => item).join(separator);
+          }
+        } catch {
+          // If parsing fails, return the string as is
+          return value;
         }
-      } catch {
-        // If parsing fails, return the string as is
-        return value;
       }
+      return value;
     }
     
     // If it's an array
     if (Array.isArray(value)) {
       // Handle malformed array like: ["[\"Reading\"", "\"Music\"", "\"Sports\"]"]
-      // Join them back and try to parse
+      // First, try joining and parsing as JSON
       const joined = value.join(',');
-      if (joined.startsWith('[') && joined.endsWith(']')) {
+      if (joined.trim().startsWith('[') && joined.trim().endsWith(']')) {
         try {
           const parsed = JSON.parse(joined);
           if (Array.isArray(parsed)) {
-            return parsed.filter(item => item).join(separator);
+            return parsed.filter(item => item && item.trim()).join(separator);
           }
         } catch {
-          // If that doesn't work, try cleaning quotes
+          // Continue to cleaning process
         }
       }
       
-      // Try to clean up escaped quotes and brackets
+      // Clean up escaped quotes and brackets from each item
       const cleaned = value.map(item => {
         if (typeof item === 'string') {
-          return item.replace(/^\[?"?\\?"?|\\?"?"?\]?$/g, '').trim();
+          // Remove leading/trailing brackets, quotes, and escape characters
+          return item
+            .replace(/^\[?"?\\?"?|\\?"?"?\]?$/g, '')
+            .replace(/^"|"$/g, '')
+            .trim();
         }
-        return item;
-      }).filter(item => item);
+        return String(item).trim();
+      }).filter(item => item && item.trim() !== '');
       
-      return cleaned.join(separator);
+      return cleaned.length > 0 ? cleaned.join(separator) : '—';
     }
     
     return String(value);

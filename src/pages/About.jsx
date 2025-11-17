@@ -11,7 +11,7 @@ const About = () => {
       <section className="rounded-2xl bg-gradient-to-r from-purple-600 to-pink-500 p-10 text-white shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">About Hridaysparsha Vivaha Mandal</h1>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">About Hrudaysparsha Vivaha Mandal</h1>
             <p className="mt-3 text-white/90 max-w-2xl">
               We connect hearts through a thoughtful, community-first approach. Our mission is to make
               finding a life partner respectful, transparent, and joyful.
@@ -29,7 +29,7 @@ const About = () => {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="rounded-xl border bg-white p-6 shadow-sm">
           <div className="text-3xl font-extrabold text-purple-700">1,000+</div>
           <div className="text-gray-600">Profiles created</div>
@@ -42,7 +42,7 @@ const About = () => {
           <div className="text-3xl font-extrabold text-blue-600">24x7</div>
           <div className="text-gray-600">Community support</div>
         </div>
-      </section>
+      </section> */}
 
       <section className="rounded-xl border bg-white p-6 shadow-sm">
         <h2 className="text-xl font-bold flex items-center"><Users className="w-5 h-5 mr-2 text-purple-600" />Our Values</h2>

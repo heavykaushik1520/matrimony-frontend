@@ -1,10 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, X, Home, Search, UserPlus, Info, Phone, MapPin, Mail, MessageCircle, Facebook, Instagram, Youtube, Linkedin } from 'lucide-react';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAppContext } from '@/contexts/AppContext';
+
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    // instant or smooth depending on preference
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [pathname]);
+  return null;
+};
 
 const AppLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -24,6 +33,7 @@ const AppLayout = () => {
     ] : [
       { icon: Search, label: 'Matches', path: '/matches' },
       { icon: UserPlus, label: 'My Profile', path: '/me' },
+      { icon: Info, label: 'Plans', path: '/plans' },
     ]),
   ];
 
@@ -45,11 +55,11 @@ const AppLayout = () => {
             >
               <img 
                 src="https://d64gsuwffb70l.cloudfront.net/688ce01f3af773f08824bf4d_1754125443583_1a2c4dcb.jpg" 
-                alt="Hridaysparsha Vivaha Mandal" 
+                alt="Hrudaysparsha Vivaha Mandal" 
                 className="w-12 h-12 object-contain"
               />
               <div className="text-left">
-                <h1 className="text-2xl font-bold">HRIDAYSPARSHA</h1>
+                <h1 className="text-2xl font-bold">HRUDAYSPARSHA</h1>
                 <p className="text-sm text-gray-600">VIVAHA MANDAL</p>
               </div>
             </button>
@@ -129,6 +139,8 @@ const AppLayout = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 space-y-8">
+        {/* scroll to top on route change */}
+        <ScrollToTop />
         <Outlet />
       </main>
 
@@ -136,7 +148,7 @@ const AppLayout = () => {
         <div className="container mx-auto px-4 py-10 text-sm text-gray-700">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h4 className="text-base font-bold text-gray-900">Hridaysparsha Vivaha Mandal</h4>
+              <h4 className="text-base font-bold text-gray-900">Hrudaysparsha Vivaha Mandal</h4>
               <div className="text-xs text-gray-600 mt-1">Reg No - E-0038279(GBR)</div>
               <div className="mt-3 flex items-start gap-2">
                 <MapPin className="w-4 h-4 mt-0.5 text-purple-600" />
@@ -145,9 +157,7 @@ const AppLayout = () => {
               <div className="mt-2 flex items-center gap-2">
                 <Phone className="w-4 h-4 text-purple-600" />
                 <div className="flex items-center gap-3">
-                  <a href="tel:+919892352498" className="hover:text-gray-900">+91 98923 52498</a>
-                  <span className="text-gray-400">/</span>
-                  <a href="tel:+918767004239" className="hover:text-gray-900">+91 87670 04239</a>
+                  <a href="tel:+918767004239" className="hover:text-gray-900">+91 8767319137</a>
                 </div>
               </div>
               <div className="mt-2 flex items-center gap-2">
@@ -156,7 +166,7 @@ const AppLayout = () => {
               </div>
               <div className="mt-2 flex items-center gap-2">
                 <MessageCircle className="w-4 h-4 text-green-600" />
-                <a href="https://wa.me/918767004239" target="_blank" rel="noreferrer" className="hover:text-gray-900">WhatsApp us</a>
+                <a href="https://wa.me/8767319137" target="_blank" rel="noreferrer" className="hover:text-gray-900">WhatsApp us</a>
               </div>
               <div className="mt-3 flex items-center gap-3">
                 <span className="text-sm text-gray-700">Follow:</span>
@@ -176,6 +186,7 @@ const AppLayout = () => {
                 <li><button onClick={() => navigate('/login')} className="hover:text-gray-900">Login</button></li>
                 <li><button onClick={() => navigate('/privacy')} className="hover:text-gray-900">Privacy Policy</button></li>
                 <li><button onClick={() => navigate('/terms')} className="hover:text-gray-900">Terms & Conditions</button></li>
+                <li><button onClick={() => navigate('/faq')} className="hover:text-gray-900">FAQ</button></li>
               </ul>
             </div>
 
@@ -203,7 +214,7 @@ const AppLayout = () => {
           </div>
 
           <div className="mt-8 pt-6 border-t flex flex-col md:flex-row items-center justify-between gap-3 text-gray-600">
-            <div>© {new Date().getFullYear()} Hridaysparsha Vivaha Mandal. All rights reserved.</div>
+            <div>© {new Date().getFullYear()} Hrudaysparsha Vivaha Mandal. All rights reserved.</div>
             <div className="flex items-center gap-4">
               <button onClick={() => navigate('/about')} className="hover:text-gray-900">About</button>
               <button onClick={() => navigate('/contact')} className="hover:text-gray-900">Contact</button>
@@ -216,5 +227,3 @@ const AppLayout = () => {
   );
 };
 export default AppLayout;
-
-
