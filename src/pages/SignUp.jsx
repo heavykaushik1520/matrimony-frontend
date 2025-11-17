@@ -313,7 +313,7 @@ const SignUp = () => {
 
         toast({
           title: "Account created",
-          description: "Welcome to Hridaysparsha!",
+          description: "Welcome to Hrudaysparsha Vivah Mandal!",
         });
         navigate("/login");
 

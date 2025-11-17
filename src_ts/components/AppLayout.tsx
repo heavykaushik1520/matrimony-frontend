@@ -37,11 +37,11 @@ const AppLayout: React.FC = () => {
             <div className="flex items-center space-x-3">
               <img 
                 src="https://d64gsuwffb70l.cloudfront.net/688ce01f3af773f08824bf4d_1754125443583_1a2c4dcb.jpg" 
-                alt="Hridaysparsha Vivaha Mandal" 
+                alt="Hrudaysparsha Vivaha Mandal" 
                 className="w-12 h-12 object-contain"
               />
               <div>
-                <h1 className="text-2xl font-bold">HRIDAYSPARSHA</h1>
+                <h1 className="text-2xl font-bold">HRUDAYSPARSHA</h1>
                 <p className="text-sm text-gray-600">VIVAHA MANDAL</p>
               </div>
             </div>

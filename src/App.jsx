@@ -15,15 +15,37 @@ import ProfileDetails from "./pages/ProfileDetails";
 import MyProfile from "./pages/MyProfile";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import Plans from "./pages/Plans";
 import AppLayout from "@/components/AppLayout";
 import { AppProvider } from "@/contexts/AppContext";
 import React from "react";
 import { useAppContext } from "@/contexts/AppContext";
+import { useNavigate } from "react-router-dom";
+import FAQ from "./pages/FAQ";
+import TermsAndConditions from "./pages/TermsAndConditions";
 
 const RequireAuth = ({ children }) => {
   const { isAuthenticated } = useAppContext();
   if (!isAuthenticated) {
     return <Index />;
+  }
+  return children;
+};
+
+const RequireMembership = ({ children }) => {
+  const { isAuthenticated, membershipActive } = useAppContext();
+  const navigate = useNavigate();
+  
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    } else if (!membershipActive) {
+      navigate('/plans');
+    }
+  }, [isAuthenticated, membershipActive, navigate]);
+  
+  if (!isAuthenticated || !membershipActive) {
+    return null; // Will redirect
   }
   return children;
 };
@@ -44,6 +66,14 @@ const router = createBrowserRouter(
         { path: "contact", element: <Contact /> },
         { path: "login", element: <SignIn /> },
         { path: "signup", element: <SignUp /> },
+        {
+          path: "plans",
+          element: (
+            <RequireAuth>
+              <Plans />
+            </RequireAuth>
+          ),
+        },
         {
           path: "matches",
           element: (
@@ -69,13 +99,14 @@ const router = createBrowserRouter(
           ),
         },
         { path: "privacy", element: <Privacy /> },
-        { path: "terms", element: <Terms /> },
+        { path: "terms", element: <TermsAndConditions /> },
+        { path: "faq", element:<FAQ/>},
         { path: "*", element: <NotFound /> },
       ],
     },
   ],
   {
-    basename: "/hridaysparshi/", // 👈 ADD THIS
+    basename: "/", // 👈 ADD THIS
   }
 );
 

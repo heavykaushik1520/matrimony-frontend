@@ -4,12 +4,32 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Heart, MapPin, GraduationCap, Briefcase, Lock } from 'lucide-react';
 import { useAppContext } from '@/contexts/AppContext';
-
 import { useNavigate } from 'react-router-dom';
-
+import { getData } from '@/store/utils';
+ 
 const ProfileCard = ({ profile, onViewDetails }) => {
   const { isSubscribed } = useAppContext();
   const navigate = useNavigate();
+  
+  const handleViewProfile = async () => {
+    try {
+      // prefer UUID id (profile.id), fallback to userId/personalId if present
+      const viewId = profile.id || profile.userId || profile.personalId;
+      if (!viewId) {
+        console.error('No view-id found on profile (id|userId|personalId missing).');
+        return;
+      }
+
+      // call dedicated API and use the .user payload if returned
+      const res = await getData(`user/auth/user/id/${viewId}`, null);
+      const payload = res?.user || res;
+      // navigate and pass fetched profile in state to avoid re-fetching
+      navigate(`/profiles/${viewId}`, { state: { profile: payload } });
+    } catch (err) {
+      console.error('Error fetching profile for view:', err);
+    }
+  };
+
   return (
     <Card className="group hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-br from-white to-purple-50 border-2 border-transparent hover:border-purple-200">
       <CardHeader className="pb-3">
@@ -74,7 +94,7 @@ const ProfileCard = ({ profile, onViewDetails }) => {
             )}
           </div>
           <Button 
-            onClick={() => navigate(`/profiles/${profile.id || profile.personalId}`)}
+            onClick={handleViewProfile}
             className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
             size="sm"
           >
